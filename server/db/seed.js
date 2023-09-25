@@ -1,5 +1,7 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
+const { faker } = require("@faker-js/faker");
+const bcrypt = require("bcrypt");
 
 let categories = [
 	{ name: "mongodb" },
@@ -47,6 +49,33 @@ const seedProducts = async () => {
 	});
 };
 
+const seedUsers = async () => {
+	const salt_rounds = 5;
+	let i = 0;
+
+	while (i < 6) {
+		const email = faker.internet.email();
+		const userName = faker.internet.userName();
+		const password = "test";
+		const hashedPassword = await bcrypt.hash(
+			password,
+			salt_rounds
+		);
+
+		await prisma.user.create({
+			data: {
+				username: userName,
+				email: email,
+				password: hashedPassword,
+				isAdmin: false,
+			},
+		});
+		++i;
+	}
+};
+
 // fetchData();
 // seedCategories();
-seedProducts();
+// seedProducts();
+seedUsers();
+// console.log(faker.internet.email());
