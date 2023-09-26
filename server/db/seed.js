@@ -14,7 +14,7 @@ let categories = [
 
 const fetchData = async (category) => {
 	const response = await fetch(
-		`https://api.itbook.store/1.0/}`
+		`https://api.itbook.store/1.0/search/${category}`
 	);
 	const data = await response.json();
 	return data.books;
