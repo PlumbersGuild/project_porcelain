@@ -2,10 +2,7 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const PORT = 8080;
-<<<<<<< HEAD
-=======
 const jwt = require("jsonwebtoken");
->>>>>>> main
 
 const cors = require("cors");
 app.use(cors());
@@ -18,12 +15,6 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-<<<<<<< HEAD
-app.use("/api", require("./api"));
-// app.use("/auth", require("./auth"))
-
-const server = app.listen(PORT, () => {
-=======
 app.use("/auth", require("./auth"));
 
 app.use((req, res, next) => {
@@ -47,7 +38,6 @@ app.use((req, res, next) => {
 // app.use("/api", require('./api'))
 
 app.listen(PORT, () => {
->>>>>>> main
 	console.log("On port" + PORT);
 });
 

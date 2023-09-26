@@ -25,15 +25,13 @@ router.post("/register", async (req, res, next) => {
 		// const token = jwt.sign({id:user.id}, process.env.JWT)
 		const token = jwt.sign(user.id, process.env.JWT);
 
-		res
-			.status(201)
-			.send({
-				user: {
-					userId: user.id,
-					username: user.username,
-					token,
-				},
-			});
+		res.status(201).send({
+			user: {
+				userId: user.id,
+				username: user.username,
+				token,
+			},
+		});
 	} catch (err) {
 		next(err);
 	}
