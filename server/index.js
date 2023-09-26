@@ -13,6 +13,9 @@ app.use("/", express.static(path.join(__dirname, "public")));
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 
+
+
+
 app.use("/auth", require("./auth"))
 
 app.use((req, res, next) => {
@@ -34,6 +37,7 @@ app.use((req, res, next) => {
     }
 })
 // app.use("/api", require('./api'))
+
 
 
 
