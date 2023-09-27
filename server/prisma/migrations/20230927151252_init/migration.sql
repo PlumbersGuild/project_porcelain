@@ -26,6 +26,7 @@ CREATE TABLE "Product" (
     "subtitle" TEXT NOT NULL,
     "price" TEXT NOT NULL,
     "image" TEXT NOT NULL,
+    "category" TEXT NOT NULL,
 
     CONSTRAINT "Product_pkey" PRIMARY KEY ("id")
 );

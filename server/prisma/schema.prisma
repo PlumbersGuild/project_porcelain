@@ -30,12 +30,12 @@ model CartItems {
   @@id([userId, productId])
 }
 
-
 model Product {
-  id         Int         @id @default(autoincrement())
-  title      String
-  subtitle   String
-  price      String
-  image      String
-  CartItems  CartItems[]
+  id        Int         @id @default(autoincrement())
+  title     String
+  subtitle  String
+  price     String
+  image     String
+  category  String
+  CartItems CartItems[]
 }

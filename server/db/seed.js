@@ -7,7 +7,6 @@ let categories = [
 	{ name: "mongodb" },
 	{ name: "sql" },
 	{ name: "nosql" },
-	{ name: "nosql" },
 	{ name: "javascript" },
 	{ name: "react" },
 ];
@@ -20,17 +19,6 @@ const fetchData = async (category) => {
 	return data.books;
 };
 
-// const seedCategories = async () => {
-// 	// const books = await fetchData();
-
-// 	categories.forEach(async (category) => {
-// 		await prisma.category.create({
-// 			data: {
-// 				name: category.name,
-// 			},
-// 		});
-// 	});
-// };
 
 const seedProducts = async () => {
 	categories.forEach(async (category) => {
@@ -43,6 +31,7 @@ const seedProducts = async () => {
 					subtitle: book.subtitle,
 					price: book.price,
 					image: book.image,
+					category: category.name
 				},
 			});
 		});
@@ -74,8 +63,8 @@ const seedUsers = async () => {
 	}
 };
 
-// fetchData();
-// seedCategories();
-// seedProducts();
+
+
+seedProducts();
 seedUsers();
-// console.log(faker.internet.email());
+
