@@ -4,33 +4,35 @@ const { PrismaClient } = require("@prisma/client");
 const prismaClient = new PrismaClient();
 
 router.post("/add", async (req, res, next) => {
-	const { id, title, subtitle, price, image, category } =
-		req.body;
+	const { id, qty, price } = req.body;
 	const user = req.user;
 
 	try {
-		// const foundUser = await prismaClient.user.findFirst({
-		// 	where: {
-		// 		id,
-		// 	},
-		// });
+		const foundOrder = await prismaClient.order.findFirst({
+			where: {
+				userId: user.id,
+				isFulfilled: false,
+			},
+		});
 
-		const foundProduct =
-			await prismaClient.product.findFirst({
-				where: {
-					id,
-				},
+		if (foundOrder) {
+			const createdCartItem =
+				await prismaClient.cartItem.create({
+					orderId: foundOrder.id,
+					productId: id,
+					qty: qty,
+					price: price,
+				});
+			res.status(200).json(createdCartItem);
+		} else {
+			res.status(401).json({
+				message: "Could not find order",
 			});
-
-		console.log(foundProduct);
-		console.log(user);
-
-		// await prismaClient.cartItems.create({
-		// 	userId: foundUser.id,
-		// 	user: foundUser,
-		// 	productId,
-		// });
-	} catch (error) {}
+		}
+	} catch (error) {
+		console.error(error.message);
+		next(error);
+	}
 });
 
 module.exports = router;

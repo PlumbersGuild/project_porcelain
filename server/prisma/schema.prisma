@@ -11,31 +11,39 @@ datasource db {
 }
 
 model User {
-  id        Int         @id @default(autoincrement())
-  username  String      @unique
-  email     String      @unique
-  password  String
-  isAdmin   Boolean
-  CartItems CartItems[]
+  id       Int     @id @default(autoincrement())
+  username String  @unique
+  email    String  @unique
+  password String
+  isAdmin  Boolean
+  Order    Order[]
 }
 
-model CartItems {
-  userId    Int
-  user      User    @relation(fields: [userId], references: [id])
+model CartItem {
+  orderId   Int
+  order     Order   @relation(fields: [orderId], references: [id])
   productId Int
   product   Product @relation(fields: [productId], references: [id])
   qty       Int
   price     Int
 
-  @@id([userId, productId])
+  @@id([orderId, productId])
+}
+
+model Order {
+  id          Int        @id @default(autoincrement())
+  userId      Int
+  user        User       @relation(fields: [userId], references: [id])
+  isFulfilled Boolean    @default(false)
+  CartItem    CartItem[]
 }
 
 model Product {
-  id        Int         @id @default(autoincrement())
-  title     String
-  subtitle  String
-  price     String
-  image     String
-  category  String
-  CartItems CartItems[]
+  id       Int        @id @default(autoincrement())
+  title    String
+  subtitle String
+  price    Int
+  image    String
+  category String
+  CartItem CartItem[]
 }

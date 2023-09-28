@@ -19,19 +19,18 @@ const fetchData = async (category) => {
 	return data.books;
 };
 
-
 const seedProducts = async () => {
 	categories.forEach(async (category) => {
 		const books = await fetchData(category.name);
-
 		books.forEach(async (book) => {
-			await prisma.product.create({
+			const newPrice = book.price.slice(1);
+			const product = await prisma.product.create({
 				data: {
 					title: book.title,
 					subtitle: book.subtitle,
-					price: book.price,
+					price: parseInt(newPrice) * 100,
 					image: book.image,
-					category: category.name
+					category: category.name,
 				},
 			});
 		});
@@ -63,8 +62,39 @@ const seedUsers = async () => {
 	}
 };
 
+const seedCart = async () => {
+	const users = await prisma.user.findMany();
+	const userId = users.map((user) => user.id);
+	let i = 0;
+	while (i <= 5) {
+		const randomProductId =
+			Math.floor(Math.random() * 50) + 1;
+		// const randomUserId = Math.floor(Math.random() * 6) + 1
+		const randomQty = Math.floor(Math.random() * 5) + 1;
+		const products = await prisma.product.findUnique({
+			where: {
+				id: randomProductId,
+			},
+		});
+		await prisma.cartItems.create({
+			data: {
+				userId: userId[i],
+				productId: randomProductId,
+				qty: randomQty,
+				price: products.price * randomQty,
+			},
+		});
+		i++;
+	}
+};
 
+let promise = new Promise(function (resolve, reject) {
+	const products = seedProducts();
+	console.log(products);
+});
 
 seedProducts();
-seedUsers();
+// seedUsers();
+// seedCart();
 
+// cart and order has to be seeded at the same time
