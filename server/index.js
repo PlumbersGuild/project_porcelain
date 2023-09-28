@@ -35,6 +35,7 @@ app.use((req, res, next) => {
 		return;
 	}
 });
+app.use("/cart", require("./api/cart"));
 // app.use("/api", require('./api'))
 
 app.listen(PORT, () => {
