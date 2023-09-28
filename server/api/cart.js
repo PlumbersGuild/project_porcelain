@@ -3,34 +3,35 @@ const router = express.Router();
 const { PrismaClient } = require("@prisma/client");
 const prismaClient = new PrismaClient();
 
-router.post("/add", async (req, res, next) => {
-	const { id, title, subtitle, price, image, category } =
-		req.body;
-	const user = req.user;
+router.post("/new", async (req, res, next) => {
+	const { productId, qty, price } = req.body;
+	const { userId } = req.user;
 
 	try {
-		// const foundUser = await prismaClient.user.findFirst({
-		// 	where: {
-		// 		id,
-		// 	},
-		// });
+		// product -> cartItem -> order
+		const findOrder = await prismaClient.Order.findFirst({
+			where: {
+				id: userId,
+			},
+		});
 
-		const foundProduct =
-			await prismaClient.product.findFirst({
-				where: {
-					id,
-				},
-			});
-
-		console.log(foundProduct);
-		console.log(user);
-
-		// await prismaClient.cartItems.create({
-		// 	userId: foundUser.id,
-		// 	user: foundUser,
-		// 	productId,
-		// });
-	} catch (error) {}
+		if (findOrder) {
+			console.log(`findOrder: `, findOrder);
+			const createdCartItem =
+				await prismaClient.cartItem.create({
+					data: {
+						productId,
+						orderId: findOrder.id,
+						qty,
+						price,
+					},
+				});
+			res.status(201).json({ createdCartItem });
+		}
+	} catch (error) {
+		console.error(error.message);
+		next(error);
+	}
 });
 
 module.exports = router;

@@ -19,7 +19,7 @@ app.use("/auth", require("./auth"));
 
 app.use((req, res, next) => {
 	const token = req.headers.authorization;
-	console.log(token);
+	// console.log(token);
 	if (!token) {
 		next();
 		return;
@@ -35,8 +35,8 @@ app.use((req, res, next) => {
 		return;
 	}
 });
-app.use("/cart", require("./api/cart"));
-// app.use("/api", require('./api'))
+
+app.use("/api", require("./api"));
 
 app.listen(PORT, () => {
 	console.log("On port" + PORT);

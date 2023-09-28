@@ -19,11 +19,17 @@ router.post("/register", async (req, res, next) => {
 				email: req.body.email,
 				password: hashedPassword,
 				isAdmin: false,
+				Order: {
+					create: [{}],
+				},
 			},
 		});
 
 		// const token = jwt.sign({id:user.id}, process.env.JWT)
-		const token = jwt.sign(user.id, process.env.JWT);
+		const token = jwt.sign(
+			{ userId: user.id, isAdmin: user.isAdmin },
+			process.env.JWT
+		);
 
 		res.status(201).send({
 			user: {
@@ -39,7 +45,7 @@ router.post("/register", async (req, res, next) => {
 
 const verifyToken = (req, res, next) => {
 	const headers = req.headers;
-	console.log(headers);
+	// console.log(headers);
 	next();
 };
 
@@ -66,7 +72,7 @@ router.post(
 			}
 
 			const token = jwt.sign(
-				{ id: user.id },
+				{ userId: user.id, isAdmin: user.isAdmin },
 				process.env.JWT
 			);
 

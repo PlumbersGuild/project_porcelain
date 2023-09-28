@@ -3,8 +3,10 @@ const router = express.Router();
 const { PrismaClient } = require("@prisma/client");
 const prismaClient = new PrismaClient();
 
+/**
+ * Gets all the new books
+ */
 router.get("/", async (req, res, next) => {
-	console.log(req);
 	try {
 		const allBooks = await prismaClient.product.findMany();
 		res.status(200).json(allBooks);
@@ -14,6 +16,9 @@ router.get("/", async (req, res, next) => {
 	}
 });
 
+/**
+ * Gets a book by specified ID
+ */
 router.get("/:id", async (req, res, next) => {
 	const { id } = req.params;
 
