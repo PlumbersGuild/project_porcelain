@@ -24,7 +24,7 @@ CREATE TABLE "Product" (
     "id" SERIAL NOT NULL,
     "title" TEXT NOT NULL,
     "subtitle" TEXT NOT NULL,
-    "price" TEXT NOT NULL,
+    "price" INTEGER NOT NULL,
     "image" TEXT NOT NULL,
     "category" TEXT NOT NULL,
 
