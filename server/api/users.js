@@ -162,4 +162,96 @@ router.delete('/products/:id', async (req, res) => {
 	}
 });
 
+// Create a new user (only accessible to admin users)
+router.post('/users', async (req, res) => {
+	try {
+	  const { user } = req; // Assuming you have user information in req
+  
+	  // Check if the user is an admin
+	  const isAdmin = await prisma.user.findUnique({
+		where: { id: user.id },
+		select: { isAdmin: true },
+	  });
+  
+	  if (!isAdmin) {
+		return res.status(403).json({ error: 'Only admins can create users' });
+	  }
+  
+	  // Parse and validate user input
+	  const { username, email, password } = req.body;
+  
+	  const newUser = await prisma.user.create({
+		data: {
+		  username,
+		  email,
+		  password, // You should hash and salt the password for security.
+		},
+	  });
+	  res.json(newUser);
+	} catch (error) {
+	  console.error(error);
+	  res.status(500).json({ error: 'Error creating user' });
+	}
+});
+
+// Edit a user by ID (only accessible to admin users)
+router.put('/users/:id', async (req, res) => {
+	try {
+	  const { user } = req; // Assuming you have user information in req
+  
+	  // Check if the user is an admin
+	  const isAdmin = await prisma.user.findUnique({
+		where: { id: user.id },
+		select: { isAdmin: true },
+	  });
+  
+	  if (!isAdmin) {
+		return res.status(403).json({ error: 'Only admins can edit users' });
+	  }
+  
+	  const { id } = req.params;
+	  const { username, email, password } = req.body;
+  
+	  const updatedUser = await prisma.user.update({
+		where: { id: parseInt(id) },
+		data: {
+		  username,
+		  email,
+		  password, // You should hash and salt the password for security.
+		},
+	  });
+	  res.json(updatedUser);
+	} catch (error) {
+	  console.error(error);
+	  res.status(500).json({ error: 'Error updating user' });
+	}
+});
+
+// Delete a user by ID (only accessible to admin users)
+router.delete('/users/:id', async (req, res) => {
+	try {
+	  const { user } = req; // Assuming you have user information in req
+  
+	  // Check if the user is an admin
+	  const isAdmin = await prisma.user.findUnique({
+		where: { id: user.id },
+		select: { isAdmin: true },
+	  });
+  
+	  if (!isAdmin) {
+		return res.status(403).json({ error: 'Only admins can delete users' });
+	  }
+  
+	  const { id } = req.params;
+	  await prisma.user.delete({
+		where: { id: parseInt(id) },
+	  });
+	  res.json({ message: 'User deleted successfully' });
+	} catch (error) {
+	  console.error(error);
+	  res.status(500).json({ error: 'Error deleting user' });
+	}
+  });
+  
+
 module.exports = router;
