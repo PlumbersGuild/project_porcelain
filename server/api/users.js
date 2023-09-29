@@ -77,8 +77,15 @@ router.get("/:id", async (req, res, next) => {
 // Create a new product (only accessible to admin users)
 router.post('/products', async (req, res) => {
 	try {
-	  // Check if the user is an admin (you need to implement this logic)
-	  if (!req.user.isAdmin) {
+	  const { user } = req; // Assuming you have user information in req
+  
+	  // Check if the user is an admin
+	  const isAdmin = await prisma.user.findUnique({
+		where: { id: user.id },
+		select: { isAdmin: true },
+	  });
+  
+	  if (!isAdmin) {
 		return res.status(403).json({ error: 'Only admins can create products' });
 	  }
   
@@ -100,8 +107,15 @@ router.post('/products', async (req, res) => {
 // Edit a product by ID (only accessible to admin users)
 router.put('/products/:id', async (req, res) => {
 	try {
-	  // Check if the user is an admin (you need to implement this logic)
-	  if (!req.user.isAdmin) {
+	  const { user } = req; // Assuming you have user information in req
+  
+	  // Check if the user is an admin
+	  const isAdmin = await prisma.user.findUnique({
+		where: { id: user.id },
+		select: { isAdmin: true },
+	  });
+  
+	  if (!isAdmin) {
 		return res.status(403).json({ error: 'Only admins can edit products' });
 	  }
   
@@ -125,8 +139,15 @@ router.put('/products/:id', async (req, res) => {
 // Delete a product by ID (only accessible to admin users)
 router.delete('/products/:id', async (req, res) => {
 	try {
-	  // Check if the user is an admin (you need to implement this logic)
-	  if (!req.user.isAdmin) {
+	  const { user } = req; // Assuming you have user information in req
+  
+	  // Check if the user is an admin
+	  const isAdmin = await prisma.user.findUnique({
+		where: { id: user.id },
+		select: { isAdmin: true },
+	  });
+  
+	  if (!isAdmin) {
 		return res.status(403).json({ error: 'Only admins can delete products' });
 	  }
   
@@ -139,6 +160,6 @@ router.delete('/products/:id', async (req, res) => {
 	  console.error(error);
 	  res.status(500).json({ error: 'Error deleting product' });
 	}
-  });
+});
 
 module.exports = router;
