@@ -33,8 +33,6 @@ router.post("/submit", async (req, res, next) => {
 				}
 			);
 
-			console.log(`foundOrder: `, foundOrder);
-
 			if (!foundOrder) {
 				res.status(404).json({
 					message: "Could not find order",
@@ -43,7 +41,10 @@ router.post("/submit", async (req, res, next) => {
 			foundOrder.isFulfilled = true;
 			res.status(201).json(foundOrder);
 		}
-	} catch (error) {}
+	} catch (error) {
+		console.error(error.message);
+		next(error);
+	}
 });
 
 module.exports = router;
