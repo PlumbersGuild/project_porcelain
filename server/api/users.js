@@ -74,8 +74,71 @@ router.get("/:id", async (req, res, next) => {
 	}
 });
 
+// Create a new product (only accessible to admin users)
+router.post('/products', async (req, res) => {
+	try {
+	  // Check if the user is an admin (you need to implement this logic)
+	  if (!req.user.isAdmin) {
+		return res.status(403).json({ error: 'Only admins can create products' });
+	  }
+  
+	  const { name, description, price } = req.body;
+	  const newProduct = await prisma.product.create({
+		data: {
+		  name,
+		  description,
+		  price,
+		},
+	  });
+	  res.json(newProduct);
+	} catch (error) {
+	  console.error(error);
+	  res.status(500).json({ error: 'Error creating product' });
+	}
+});
 
+// Edit a product by ID (only accessible to admin users)
+router.put('/products/:id', async (req, res) => {
+	try {
+	  // Check if the user is an admin (you need to implement this logic)
+	  if (!req.user.isAdmin) {
+		return res.status(403).json({ error: 'Only admins can edit products' });
+	  }
+  
+	  const { id } = req.params;
+	  const { name, description, price } = req.body;
+	  const updatedProduct = await prisma.product.update({
+		where: { id: parseInt(id) },
+		data: {
+		  name,
+		  description,
+		  price,
+		},
+	  });
+	  res.json(updatedProduct);
+	} catch (error) {
+	  console.error(error);
+	  res.status(500).json({ error: 'Error updating product' });
+	}
+});
 
-
+// Delete a product by ID (only accessible to admin users)
+router.delete('/products/:id', async (req, res) => {
+	try {
+	  // Check if the user is an admin (you need to implement this logic)
+	  if (!req.user.isAdmin) {
+		return res.status(403).json({ error: 'Only admins can delete products' });
+	  }
+  
+	  const { id } = req.params;
+	  await prisma.product.delete({
+		where: { id: parseInt(id) },
+	  });
+	  res.json({ message: 'Product deleted successfully' });
+	} catch (error) {
+	  console.error(error);
+	  res.status(500).json({ error: 'Error deleting product' });
+	}
+  });
 
 module.exports = router;
