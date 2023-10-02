@@ -2,15 +2,17 @@ const express = require("express");
 const router = express.Router();
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
+const verify = require("../auth/verify")
 
 // Create a new product (only accessible to admin users)
-router.post('/products/new', async (req, res, next) => {
+router.post('/products/new', verify, async (req, res, next) => {
 	try {
 	  const { user } = req;
+      console.log(req.user);
   
 	  // Check if the user is an admin
 	  const isAdmin = await prisma.user.findUnique({
-		where: { id: user.id },
+		where: { id: user.userId },
 		select: { isAdmin: true },
     });
     
@@ -25,7 +27,7 @@ router.post('/products/new', async (req, res, next) => {
 		data: {
 		  title,
           subtitle,
-		  price,
+		  price: parseInt(price),
           image,
           category
 		},
@@ -38,13 +40,13 @@ router.post('/products/new', async (req, res, next) => {
 });
 
 // Edit a product by ID (only accessible to admin users)
-router.put('/products/:id', async (req, res) => {
+router.put('/products/:id', verify, async (req, res) => {
 	try {
 	  const { user } = req;
   
 	  // Check if the user is an admin
 	  const isAdmin = await prisma.user.findUnique({
-		where: { id: user.id },
+		where: { id: user.userId },
 		select: { isAdmin: true },
 	  });
   
@@ -53,15 +55,19 @@ router.put('/products/:id', async (req, res) => {
 	  }
   
 	  const { id } = req.params;
-	  const { title, price } = req.body;
+	  const { title, subtitle, price, image, category } = req.body;
 	  const updatedProduct = await prisma.product.update({
-		where: { id: parseInt(id) },
+		// where: { id: parseInt(id) },
+        where: { id: user.userId },
 		data: {
 		  title,
-		  price,
+          subtitle,
+		  price: parseInt(price),
+          image,
+          category
 		},
 	  });
-	  res.json(updatedProduct);
+	  res.status(201).json(updatedProduct);
 	} catch (error) {
 	  console.error(error);
 	  res.status(500).json({ error: 'Error updating product' });
@@ -69,13 +75,14 @@ router.put('/products/:id', async (req, res) => {
 });
 
 // Delete a product by ID (only accessible to admin users)
-router.delete('/products/:id', async (req, res) => {
+router.delete('/products/:id', verify, async (req, res) => {
 	try {
 	  const { user } = req;
   
 	  // Check if the user is an admin
 	  const isAdmin = await prisma.user.findUnique({
-		where: { id: user.id },
+		// where: { id: user.userId },
+        where: { id: user.userId },
 		select: { isAdmin: true },
 	  });
   
@@ -85,7 +92,7 @@ router.delete('/products/:id', async (req, res) => {
   
 	  const { id } = req.params;
 	  await prisma.product.delete({
-		where: { id: parseInt(id) },
+		where: { id: user.userId },
 	  });
 	  res.json({ message: 'Product deleted successfully' });
 	} catch (error) {
