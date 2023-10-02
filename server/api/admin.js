@@ -8,19 +8,16 @@ const verify = require("../auth/verify")
 router.post('/products/new', verify, async (req, res, next) => {
 	try {
 	  const { user } = req;
-      console.log(req.user);
   
 	  // Check if the user is an admin
-	  const isAdmin = await prisma.user.findUnique({
+	  const foundUser = await prisma.user.findUnique({
 		where: { id: user.userId },
-		select: { isAdmin: true },
     });
     
-    console.log(`isAdmin?: `, isAdmin);
   
-	  if (!isAdmin) {
+		if (!foundUser.isAdmin) {
 		return res.status(403).json({ error: 'Only admins can create products' });
-	  }
+		}
   
 	  const { title, subtitle, price, image, category } = req.body;
 	  const newProduct = await prisma.product.create({
@@ -40,25 +37,27 @@ router.post('/products/new', verify, async (req, res, next) => {
 });
 
 // Edit a product by ID (only accessible to admin users)
-router.put('/products/:id', verify, async (req, res) => {
+router.put('/products/:id', verify, async (req, res, next) => {
 	try {
 	  const { user } = req;
   
-	  // Check if the user is an admin
-	  const isAdmin = await prisma.user.findUnique({
+	   // Check if the user is an admin
+       const foundUser = await prisma.user.findUnique({
 		where: { id: user.userId },
-		select: { isAdmin: true },
-	  });
+		// select: { isAdmin: true },
+    });
+    
   
-	  if (!isAdmin) {
-		return res.status(403).json({ error: 'Only admins can edit products' });
-	  }
+		if (!foundUser.isAdmin) {
+		return res.status(403).json({ error: 'Only admins can change products' });
+		}
+  
   
 	  const { id } = req.params;
 	  const { title, subtitle, price, image, category } = req.body;
 	  const updatedProduct = await prisma.product.update({
 		// where: { id: parseInt(id) },
-        where: { id: user.userId },
+        where: { id: parseInt(id) },
 		data: {
 		  title,
           subtitle,
@@ -70,7 +69,7 @@ router.put('/products/:id', verify, async (req, res) => {
 	  res.status(201).json(updatedProduct);
 	} catch (error) {
 	  console.error(error);
-	  res.status(500).json({ error: 'Error updating product' });
+	  res.status(500).json({ error: 'Error updating product because product does not exist' });
 	}
 });
 
@@ -79,25 +78,26 @@ router.delete('/products/:id', verify, async (req, res) => {
 	try {
 	  const { user } = req;
   
-	  // Check if the user is an admin
-	  const isAdmin = await prisma.user.findUnique({
-		// where: { id: user.userId },
-        where: { id: user.userId },
-		select: { isAdmin: true },
-	  });
+	   // Check if the user is an admin
+       const foundUser = await prisma.user.findUnique({
+		where: { id: user.userId },
+		// select: { isAdmin: true },
+    });
+    
   
-	  if (!isAdmin) {
+		if (!foundUser.isAdmin) {
 		return res.status(403).json({ error: 'Only admins can delete products' });
-	  }
+		}
+  
   
 	  const { id } = req.params;
-	  await prisma.product.delete({
-		where: { id: user.userId },
+	  const deletedProduct = await prisma.product.delete({
+		where: { id: parseInt(id) },
 	  });
 	  res.json({ message: 'Product deleted successfully' });
 	} catch (error) {
 	  console.error(error);
-	  res.status(500).json({ error: 'Error deleting product' });
+	  res.status(500).json({ error: 'Error deleting product.  Either product doesnt exist or there was a server error' });
 	}
 });  
 
