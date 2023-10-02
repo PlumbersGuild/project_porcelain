@@ -2,76 +2,55 @@ const express = require("express");
 const router = express.Router();
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
-const jwt = require("jsonwebtoken");
 
-const checkAdminAuthorization = (req, res, next) => {
-	// const user = req.user;
-	const token = req.headers.authorization;
-	if (!token) {
-		res.status(400).send({ message: "NOT AUTHORIZED!" });
-	}
+const jwt = require('jsonwebtoken')
+const verify = require("../auth/verify");
 
+// Get all users (only accessible by admins)
+router.get("/", verify, async (req, res, next) => {
+	const { user } = req;
+	
 	try {
-		const user = jwt.verify(token, process.env.JWT);
-		req.user = user;
-		next();
-		return;
-	} catch (error) {
-		console.error(error);
-		res.status(400).send({ message: "NOT AUTHORIZED!" });
-		return;
-	}
-
-	// const isAdmin = req.isAdmin
-
-	// if (isAdmin !== true) {
-	// 	return res.status(401).send("Admin authorization required")
-	// }
-
-	// next();
-};
-
-router.get("/", async (req, res, next) => {
-	try {
+		const isAdmin = await prisma.user.findUnique({
+		where: { id: user.userId }
+	  });
+  
+	  if (!isAdmin) {
+		return res.status(403).json({ error: 'Only admins can edit products' });
+	  }
+		
 		const allUsers = await prisma.user.findMany();
-		res.send(allUsers);
+		res.status(200).json(allUsers);
 	} catch (error) {
 		next(error);
 	}
 });
 
-router.get("/admin-dashboard", async (req, res) => {
-	if (req.user) {
-		res.send({ user: req.user });
-		return;
-	} else {
-		res.send({ message: "no user" });
-		return;
-	}
-	// try {
-	// 	const adminUsers = await prisma.user.findUnique({
-	// 		where: {
-	// 			isAdmin: req.params.isAdmin,
-	// 		},
-	// 	});
-	// 	res.send(adminUsers);
-	// } catch (error) {
-	// 	console.error("Error fetching admin users:", error);
-	// }
-	res.status(200).send({ Message: "Authorized!" });
-});
 
-router.get("/:id", async (req, res, next) => {
+// Get a user by id (only accessible by admins)
+router.get("/:id", verify, async (req, res, next) => {
+		  const { user } = req;
+
 	try {
+		const isAdmin = await prisma.user.findUnique({
+		where: { id: user.userId }
+	  });
+  
+	  if (!isAdmin) {
+		return res.status(403).json({ error: 'Only admins can edit products' });
+	  }
+		
 		const singleUser = await prisma.user.findUnique({
 			where: {
-				id: +req.params.id,
+				id: +req.params.id
 			},
 		});
-		res.send(singleUser);
+		res.status(200).json(singleUser);
 	} catch (error) {
 		next(error);
 	}
+
 });
+
 
 module.exports = router;
