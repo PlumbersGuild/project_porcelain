@@ -1,8 +1,12 @@
 const router = require("express").Router();
+
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const verify = require("./verify");
+
+
 
 router.post("/register", async (req, res, next) => {
 	const salt_rounds = 5;
@@ -43,11 +47,12 @@ router.post("/register", async (req, res, next) => {
 	}
 });
 
-router.post("/login", async (req, res, next) => {
-	try {
-		const user = await prisma.user.findUnique({
-			where: { username: req.body.username },
-		});
+
+router.post("/login",  verify, async (req, res, next) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { username: req.body.username },
+    });
 
 		if (!user) {
 			return res.status(401).send("Invalid Login");
