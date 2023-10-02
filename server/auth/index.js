@@ -43,48 +43,38 @@ router.post("/register", async (req, res, next) => {
 	}
 });
 
-const verifyToken = (req, res, next) => {
-	const headers = req.headers;
-	// console.log(headers);
-	next();
-};
+router.post("/login", async (req, res, next) => {
+	try {
+		const user = await prisma.user.findUnique({
+			where: { username: req.body.username },
+		});
 
-router.post(
-	"/login",
-	verifyToken,
-	async (req, res, next) => {
-		try {
-			const user = await prisma.user.findUnique({
-				where: { username: req.body.username },
-			});
-
-			if (!user) {
-				return res.status(401).send("Invalid Login");
-			}
-
-			const isValid = bcrypt.compare(
-				req.body.password,
-				user.password
-			);
-
-			if (!isValid) {
-				return res.status(401).send("Invalid Login");
-			}
-
-			const token = jwt.sign(
-				{ userId: user.id, isAdmin: user.isAdmin },
-				process.env.JWT
-			);
-
-			res.send({
-				token,
-				user: { userId: user.id, username: user.username },
-			});
-		} catch (err) {
-			next(err);
+		if (!user) {
+			return res.status(401).send("Invalid Login");
 		}
+
+		const isValid = bcrypt.compare(
+			req.body.password,
+			user.password
+		);
+
+		if (!isValid) {
+			return res.status(401).send("Invalid Login");
+		}
+
+		const token = jwt.sign(
+			{ userId: user.id, isAdmin: user.isAdmin },
+			process.env.JWT
+		);
+
+		res.send({
+			token,
+			user: { userId: user.id, username: user.username },
+		});
+	} catch (err) {
+		next(err);
 	}
-);
+});
 
 router.get("/me", async (req, res, next) => {
 	if (!req.user) {
