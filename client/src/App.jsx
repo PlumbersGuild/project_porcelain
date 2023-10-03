@@ -8,18 +8,44 @@ import CartPage from "./pages/CartPage";
 import Home from "./pages/Home";
 
 function App() {
-  return (
-    <>
-      <Routes>
-        <Route path={"/"} element={<Home />} />
-        <Route path={"/books"} element={<BooksPage />} />
-        <Route path={"/books/:id"} element={<SingleBookPage />} />
-        <Route path={"/login"} element={<AuthPage />} />
-        <Route path={"/about"} element={<AboutPage />} />
-        <Route path={"/cart"} element={<CartPage />} />
-      </Routes>
-    </>
-  );
+	const protectedRoutes = () => {
+		return (
+			<>
+				<Routes></Routes>
+			</>
+		);
+	};
+
+	return (
+		<>
+			<Routes>
+				<Route
+					path={"/"}
+					element={<Home />}
+				/>
+				<Route
+					path={"/books"}
+					element={<BooksPage />}
+				/>
+				<Route
+					path={"/books/:id"}
+					element={<SingleBookPage />}
+				/>
+				<Route
+					path={"/login"}
+					element={<AuthPage />}
+				/>
+				<Route
+					path={"/about"}
+					element={<AboutPage />}
+				/>
+				<Route
+					path={"/cart"}
+					element={<CartPage />}
+				/>
+			</Routes>
+		</>
+	);
 }
 
 export default App;
