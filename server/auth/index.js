@@ -54,33 +54,32 @@ router.post("/login",  verify, async (req, res, next) => {
       where: { username: req.body.username },
     });
 
-			if (!user) {
-				return res.status(401).send("Invalid Login");
-			}
-
-			const isValid = bcrypt.compare(
-				req.body.password,
-				user.password
-			);
-
-			if (!isValid) {
-				return res.status(401).send("Invalid Login");
-			}
-
-			const token = jwt.sign(
-				{ userId: user.id, isAdmin: user.isAdmin },
-				process.env.JWT
-			);
-
-			res.send({
-				token,
-				user: { userId: user.id, username: user.username },
-			});
-		} catch (err) {
-			next(err);
+		if (!user) {
+			return res.status(401).send("Invalid Login");
 		}
+
+		const isValid = bcrypt.compare(
+			req.body.password,
+			user.password
+		);
+
+		if (!isValid) {
+			return res.status(401).send("Invalid Login");
+		}
+
+		const token = jwt.sign(
+			{ userId: user.id, isAdmin: user.isAdmin },
+			process.env.JWT
+		);
+
+		res.send({
+			token,
+			user: { userId: user.id, username: user.username },
+		});
+	} catch (err) {
+		next(err);
 	}
-);
+});
 
 router.get("/me", async (req, res, next) => {
 	if (!req.user) {

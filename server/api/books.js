@@ -46,4 +46,32 @@ router.get("/:id", async (req, res, next) => {
 	}
 });
 
+router.post("/new", async (req, res, next) => {
+	const { title, subtitle, price, image, category } =
+		req.body;
+
+	try {
+		const newBook = await prismaClient.product.create({
+			data: {
+				title,
+				subtitle,
+				price,
+				image,
+				category,
+			},
+		});
+
+		if (!newBook) {
+			res.status(400).json({
+				message: "Could not create a new book",
+			});
+		}
+		res.status(201).json(newBook);
+	} catch (error) {
+		console.error(error.message);
+		next(error);
+	}
+});
+
+
 module.exports = router;
