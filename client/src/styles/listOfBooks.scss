@@ -12,7 +12,8 @@
 		object-fit: contain;
 
 		.list__book {
-			color: #924e00;
+			// color: #924e00;
+			color: white;
 			display: flex;
 			flex-direction: column;
 			align-items: center;
@@ -56,7 +57,7 @@
 			}
 
 			button:hover {
-				background-color: gold;
+				background-color: lightgray;
 			}
 		}
 	}
@@ -64,4 +65,15 @@
 	.list__books::-webkit-scrollbar {
 		display: none;
 	}
+}
+.page__title {
+	background-color: #14213d;
+		text-align: center;
+		padding: 28px;
+		color: white;
+		font-size:xx-large;
+}
+
+.link {
+	text-decoration: none;
 }
