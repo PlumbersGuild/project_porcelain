@@ -12,9 +12,31 @@ function BooksPage() {
   const javascriptBooks = data.filter((book) => book.category === "javascript");
   const reactBooks = data.filter((book) => book.category === "react");
 
-  console.log(data);
+  //   const categories = ["sql", "nosql", "mongodb", "javascript", "react"];
   return (
     <>
+      {/* <div className="home_container">
+        <div className="home__content">
+          {categories.forEach((category) => {
+            const filtered = data.filter((book) => book.category === category);
+            <div className="list__container">
+              <div className="list__content">
+                {console.log(filtered)}
+                {filtered.map((book) => (
+                  <Link className="link" key={book.id} to={`/books/${book.id}`}>
+                    <div className="list__book" key={book.isbn13}>
+                      <h3>{book.title}</h3>
+                      <h4>$ {book.price / 100}</h4>
+                      <img src={book.image} alt={book.title} />
+                      <button>Add to Cart</button>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>;
+          })}
+        </div>
+      </div> */}
       <h1 className="page__title">Featured Categories</h1>
       <div className="home__container">
         <div className="home__content">
