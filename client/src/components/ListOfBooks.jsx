@@ -1,22 +1,51 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useGetBooksQuery } from "../reducers/api";
 
-function ListOfBooks({ books }) {
-  const filteredBooks = books.filter((book) => book.price !== "$0.00");
+function ListOfBooks() {
+	const [books, setBooks] = useState([]);
 
-  return (
-    <div className="list__container">
-      <div className="list__books">
-        {filteredBooks.map((book) => (
-          <div className="list__book" key={book.isbn13}>
-            <h3>{book.title}</h3>
-            <h4>$ {book.price / 100}</h4>
-            <img src={book.image} alt="" />
-            <button>Add to Cart</button>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+	const { isLoading, data, error } = useGetBooksQuery();
+
+	useEffect(() => {
+		if (error) {
+			console.log("Error has occurred");
+		}
+
+		if (isLoading) {
+			console.log("Loading...");
+		}
+		if (data) {
+			setBooks(data);
+		}
+	}, [data, error]);
+
+	const filteredBooks = books.filter(
+		(book) => book.price !== "$0.00"
+	);
+
+	if (isLoading) {
+		return <h1>Loading...</h1>;
+	}
+
+	return (
+		<div className="list__container">
+			<div className="list__books">
+				{filteredBooks.map((book) => (
+					<div
+						className="list__book"
+						key={book.id}>
+						<h3>{book.title}</h3>
+						<h4>$ {book.price / 100}</h4>
+						<img
+							src={book.image}
+							alt=""
+						/>
+						<button>Add to Cart</button>
+					</div>
+				))}
+			</div>
+		</div>
+	);
 }
 
 export default ListOfBooks;
