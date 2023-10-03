@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useGetBooksQuery } from "../reducers/api";
+import Placeholder from "../assets/placeholder.png";
 
 function ListOfBooks() {
 	const [books, setBooks] = useState([]);
@@ -37,7 +38,7 @@ function ListOfBooks() {
 						<h3>{book.title}</h3>
 						<h4>$ {book.price / 100}</h4>
 						<img
-							src={book.image}
+							src={Placeholder}
 							alt=""
 						/>
 						<button>Add to Cart</button>
