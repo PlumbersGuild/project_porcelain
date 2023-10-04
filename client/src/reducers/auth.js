@@ -32,13 +32,11 @@ function storeToken(state, { payload }) {
 	console.log(state);
 	state.credentials = {
 		token: payload.token,
-		user: { ...payload.user },
 	};
 	window.sessionStorage.setItem(
 		CREDENTIALS,
 		JSON.stringify({
 			token: payload.token,
-			user: { ...payload.user },
 		})
 	);
 }
@@ -50,7 +48,6 @@ const authSlice = createSlice({
 			window.sessionStorage.getItem(CREDENTIALS)
 		) || {
 			token: "",
-			user: { userId: null },
 		},
 	},
 	reducers: {},
@@ -69,7 +66,6 @@ const authSlice = createSlice({
 				console.log("logout");
 				state.credentials = {
 					token: "",
-					user: { userId: null },
 				};
 				window.sessionStorage.removeItem(CREDENTIALS);
 			}

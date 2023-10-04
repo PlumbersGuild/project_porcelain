@@ -7,7 +7,7 @@ import logo from "../assets/logo-no-background.png";
 function Nav() {
 	const [logout] = useLogoutMutation();
 	const user = useSelector(
-		(state) => state.auth.credentials.user
+		(state) => state.auth.credentials.token
 	);
 	return (
 		<nav>

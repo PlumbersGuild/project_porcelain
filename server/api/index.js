@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const verify = require("../auth/verify");
 
 router.use("/books", require("./books"));
 router.use("/users", require("./users"));

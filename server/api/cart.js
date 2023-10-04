@@ -2,13 +2,21 @@ const express = require("express");
 const router = express.Router();
 const { PrismaClient } = require("@prisma/client");
 const prismaClient = new PrismaClient();
+const verify = require("../auth/verify");
 
-router.post("/new", async (req, res, next) => {
-	const { productId, qty } = req.body;
+router.get("/", async (req, res, next) => {
 	const { userId } = req.user;
 
+	if (!userId) {
+		const foundProduct =
+			await prismaClient.product.findFirst({
+				where: {
+					id: productId,
+				},
+			});
+	}
+
 	try {
-		// product -> cartItem -> order
 		const foundOrder = await prismaClient.Order.findFirst({
 			where: {
 				id: userId,
@@ -16,12 +24,54 @@ router.post("/new", async (req, res, next) => {
 		});
 
 		if (foundOrder) {
+			res.status(200).json(foundOrder);
+		}
+	} catch (error) {
+		console.error(error.message);
+		next(error);
+	}
+});
+
+router.post("/new", verify, async (req, res, next) => {
+	const { book, qty } = req.body;
+	const { userId } = req.user;
+
+	console.log(`\n [DEBUG] book: `, req.body);
+
+	console.log(req.user);
+
+	// if (!userId) {
+	// 	const foundProduct =
+	// 		await prismaClient.product.findFirst({
+	// 			where: {
+	// 				id: productId,
+	// 			},
+	// 		});
+	// }
+
+	try {
+		// product -> cartItem -> order
+		const foundOrder = await prismaClient.Order.findFirst({
+			where: {
+				id: userId,
+				isFulfilled: false,
+			},
+		});
+
+		console.log(`\n [DEBUG] foundOrder: `, foundOrder);
+
+		if (foundOrder) {
 			const foundProduct =
-				await prismaClient.product.findFirst({
+				await prismaClient.product.findUnique({
 					where: {
-						id: productId,
+						id: book.id,
 					},
 				});
+
+			console.log(
+				`\n [DEBUG] foundProduct: `,
+				foundProduct
+			);
 
 			if (!foundProduct) {
 				res.status(404).json({
@@ -32,17 +82,26 @@ router.post("/new", async (req, res, next) => {
 			const createdCartItem =
 				await prismaClient.cartItem.create({
 					data: {
-						productId,
+						// order: foundOrder,
+						// qty,
+						// price: book.price,
+						// product: book,
 						orderId: foundOrder.id,
 						qty,
-						price: foundProduct.price,
+						price: book.price,
+						productId: foundProduct.id,
 					},
 				});
 			res.status(201).json(createdCartItem);
 		} else {
-			res.status(404).json({
-				message: "Could not find order",
+			const createdOrder = prismaClient.Order.create({
+				userId,
 			});
+
+			console.log(
+				`\n [DEBUG] createdOrder: `,
+				createdOrder
+			);
 		}
 	} catch (error) {
 		console.error(error.message);
@@ -50,6 +109,7 @@ router.post("/new", async (req, res, next) => {
 	}
 });
 
+// UPDATE productId to book and adjust accordingly
 router.put("/update", async (req, res, next) => {
 	const { productId, qty } = req.body;
 	const { userId } = req.user;
