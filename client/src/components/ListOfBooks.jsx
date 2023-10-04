@@ -4,6 +4,7 @@ import Placeholder from "../assets/placeholder.png";
 import { Link } from "react-router-dom";
 
 function ListOfBooks() {
+
 	const [books, setBooks] = useState([]);
 
 	const { isLoading, data, error } = useGetBooksQuery();

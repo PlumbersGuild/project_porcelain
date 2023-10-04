@@ -1,8 +1,10 @@
 import { useGetBookByIdQuery } from "../reducers/api";
 import { useParams } from "react-router-dom";
 import Placeholder from "../assets/placeholder.png";
+
 import { useSelector } from "react-redux";
 import { useAddNewCartItemMutation } from "../reducers/cart";
+
 
 const SingleBookPage = () => {
 	const { id } = useParams();
@@ -21,6 +23,7 @@ const SingleBookPage = () => {
 		return <div>Error loading book data</div>;
 	}
 
+  
 	const handleAddToCart = async (book, qty) => {
 		const userInput = { ...book, qty };
 		console.log(book, qty);
@@ -56,6 +59,7 @@ const SingleBookPage = () => {
 			</div>
 		</div>
 	);
+
 };
 
 export default SingleBookPage;
