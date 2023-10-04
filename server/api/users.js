@@ -7,7 +7,7 @@ const jwt = require("jsonwebtoken");
 const verify = require("../auth/verify");
 
 // Get all users (only accessible by admins)
-router.get("/", verify, async (req, res, next) => {
+router.get("/", async (req, res, next) => {
 	const { user } = req;
 
 	try {
@@ -29,7 +29,7 @@ router.get("/", verify, async (req, res, next) => {
 });
 
 // Get a user by id (only accessible by admins)
-router.get("/:id", verify, async (req, res, next) => {
+router.get("/:id", async (req, res, next) => {
 	const { user } = req;
 
 	try {

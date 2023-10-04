@@ -33,19 +33,13 @@ router.post("/register", async (req, res, next) => {
 			process.env.JWT
 		);
 
-		res.status(201).send({
-			user: {
-				userId: user.id,
-				username: user.username,
-				token,
-			},
-		});
+		res.status(201).send({ token });
 	} catch (err) {
 		next(err);
 	}
 });
 
-router.post("/login", verify, async (req, res, next) => {
+router.post("/login", async (req, res, next) => {
 	try {
 		const user = await prisma.user.findUnique({
 			where: { username: req.body.username },

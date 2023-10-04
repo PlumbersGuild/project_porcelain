@@ -7,6 +7,22 @@ export const api = createApi({
 	reducerPath: "api",
 	baseQuery: fetchBaseQuery({
 		baseUrl: "http://localhost:8080/",
+		prepareHeaders: (headers) => {
+			const credentials = JSON.parse(
+				window.sessionStorage.getItem("credentials")
+			);
+
+			if (!credentials) {
+				return headers;
+			}
+
+			const token = credentials.token;
+
+			if (token) {
+				headers.set("Authorization", token);
+			}
+			return headers;
+		},
 	}),
 	endpoints: (builder) => ({
 		getBooks: builder.query({

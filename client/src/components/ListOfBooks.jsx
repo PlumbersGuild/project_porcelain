@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useGetBooksQuery } from "../reducers/api";
 import Placeholder from "../assets/placeholder.png";
+import { Link } from "react-router-dom";
 
 function ListOfBooks() {
 	const [books, setBooks] = useState([]);
@@ -41,7 +42,12 @@ function ListOfBooks() {
 							src={Placeholder}
 							alt=""
 						/>
-						<button>Add to Cart</button>
+						<Link
+							className="link"
+							key={book.id}
+							to={`/books/${book.id}`}>
+							<button>View More</button>
+						</Link>
 					</div>
 				))}
 			</div>

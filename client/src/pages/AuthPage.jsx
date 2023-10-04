@@ -5,7 +5,7 @@ import Home from "./Home";
 
 function AuthPage() {
 	const me = useSelector(
-		(state) => state.auth.credentials.user
+		(state) => state.auth.credentials.token
 	);
 
 	const guestRouter = (
@@ -26,9 +26,7 @@ function AuthPage() {
 		</Routes>
 	);
 
-	const loggedIn = me.userId;
-
-	return loggedIn !== null ? userRouter : guestRouter;
+	return me ? userRouter : guestRouter;
 }
 
 export default AuthPage;
