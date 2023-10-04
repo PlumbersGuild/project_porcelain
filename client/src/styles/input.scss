@@ -23,6 +23,7 @@ nav {
 	display: flex;
 	justify-content: space-between;
 	box-shadow: 2px 2px 2px black;
+    z-index: 99;
 	.navBar {
 		display: flex;
 		align-items: center;
