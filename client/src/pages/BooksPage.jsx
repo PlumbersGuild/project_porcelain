@@ -1,5 +1,6 @@
 import { useGetBooksQuery } from "../reducers/api";
 import { Link } from "react-router-dom";
+import Placeholder from "../assets/placeholder.png";
 
 function BooksPage() {
   const { data, isLoading } = useGetBooksQuery();
@@ -44,14 +45,14 @@ function BooksPage() {
           <div className="list__container">
             <div className="list__books">
               {sqlBooks.map((book) => (
-                <Link className="link" key={book.id} to={`/books/${book.id}`}>
-                  <div className="list__book" key={book.isbn13}>
-                    <h3>{book.title}</h3>
-                    <h4>$ {book.price / 100}</h4>
-                    <img src={book.image} alt={book.title} />
-                    <button>Add to Cart</button>
-                  </div>
-                </Link>
+                <div className="list__book" key={book.isbn13}>
+                  <h3>{book.title}</h3>
+                  <h4>$ {book.price / 100}</h4>
+                  <img src={Placeholder} alt={book.title} />
+                  <Link className="link" key={book.id} to={`/books/${book.id}`}>
+                    <button>View More</button>
+                  </Link>
+                </div>
               ))}
             </div>
           </div>
@@ -59,14 +60,14 @@ function BooksPage() {
           <div className="list__container">
             <div className="list__books">
               {noSqlBooks.map((book) => (
-                <Link className="link" key={book.id} to={`/books/${book.id}`}>
-                  <div className="list__book" key={book.isbn13}>
-                    <h3>{book.title}</h3>
-                    <h4>$ {book.price / 100}</h4>
-                    <img src={book.image} alt={book.title} />
-                    <button>Add to Cart</button>
-                  </div>
-                </Link>
+                <div className="list__book" key={book.isbn13}>
+                  <h3>{book.title}</h3>
+                  <h4>$ {book.price / 100}</h4>
+                  <img src={Placeholder} alt={book.title} />
+                  <Link className="link" key={book.id} to={`/books/${book.id}`}>
+                    <button>View More</button>
+                  </Link>
+                </div>
               ))}
             </div>
           </div>
@@ -74,14 +75,14 @@ function BooksPage() {
           <div className="list__container">
             <div className="list__books">
               {mongodbBooks.map((book) => (
-                <Link className="link" key={book.id} to={`/books/${book.id}`}>
-                  <div className="list__book" key={book.isbn13}>
-                    <h3>{book.title}</h3>
-                    <h4>$ {book.price / 100}</h4>
-                    <img src={book.image} alt={book.title} />
-                    <button>Add to Cart</button>
-                  </div>
-                </Link>
+                <div className="list__book" key={book.isbn13}>
+                  <h3>{book.title}</h3>
+                  <h4>$ {book.price / 100}</h4>
+                  <img src={Placeholder} alt={book.title} />
+                  <Link className="link" key={book.id} to={`/books/${book.id}`}>
+                    <button>View More</button>
+                  </Link>
+                </div>
               ))}
             </div>
           </div>
@@ -89,14 +90,14 @@ function BooksPage() {
           <div className="list__container">
             <div className="list__books">
               {javascriptBooks.map((book) => (
-                <Link className="link" key={book.id} to={`/books/${book.id}`}>
-                  <div className="list__book" key={book.isbn13}>
-                    <h3>{book.title}</h3>
-                    <h4>$ {book.price / 100}</h4>
-                    <img src={book.image} alt={book.title} />
-                    <button>Add to Cart</button>
-                  </div>
-                </Link>
+                <div className="list__book" key={book.isbn13}>
+                  <h3>{book.title}</h3>
+                  <h4>$ {book.price / 100}</h4>
+                  <img src={Placeholder} alt={book.title} />
+                  <Link className="link" key={book.id} to={`/books/${book.id}`}>
+                    <button>View More</button>
+                  </Link>
+                </div>
               ))}
             </div>
           </div>
@@ -104,14 +105,14 @@ function BooksPage() {
           <div className="list__container">
             <div className="list__books">
               {reactBooks.map((book) => (
-                <Link className="link" key={book.id} to={`/books/${book.id}`}>
-                  <div className="list__book" key={book.isbn13}>
-                    <h3>{book.title}</h3>
-                    <h4>$ {book.price / 100}</h4>
-                    <img src={book.image} alt={book.title} />
-                    <button>Add to Cart</button>
-                  </div>
-                </Link>
+                <div className="list__book" key={book.isbn13}>
+                  <h3>{book.title}</h3>
+                  <h4>$ {book.price / 100}</h4>
+                  <img src={Placeholder} alt={book.title} />
+                  <Link className="link" key={book.id} to={`/books/${book.id}`}>
+                    <button>View More</button>
+                  </Link>
+                </div>
               ))}
             </div>
           </div>
