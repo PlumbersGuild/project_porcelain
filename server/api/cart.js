@@ -79,20 +79,42 @@ router.post("/new", verify, async (req, res, next) => {
 				});
 			}
 
-			const createdCartItem =
-				await prismaClient.cartItem.create({
-					data: {
-						// order: foundOrder,
-						// qty,
-						// price: book.price,
-						// product: book,
-						orderId: foundOrder.id,
-						qty,
-						price: book.price,
-						productId: foundProduct.id,
+			const duplicateCartItem =
+				await prismaClient.cartItem.findUnique({
+					where: {
+						orderId_productId: {
+							orderId: foundOrder.id,
+							productId: foundProduct.id,
+						},
 					},
 				});
-			res.status(201).json(createdCartItem);
+
+			if (duplicateCartItem) {
+				const newQty = duplicateCartItem.qty + qty;
+				await prismaClient.cartItem.update({
+					where: {
+						orderId_productId: {
+							orderId: foundOrder.id,
+							productId: foundProduct.id,
+						},
+					},
+					data: {
+						qty: newQty,
+					},
+				});
+				res.status(200).json(duplicateCartItem);
+			} else {
+				const createdCartItem =
+					await prismaClient.cartItem.create({
+						data: {
+							orderId: foundOrder.id,
+							qty,
+							price: book.price,
+							productId: foundProduct.id,
+						},
+					});
+				res.status(201).json(createdCartItem);
+			}
 		} else {
 			const createdOrder = prismaClient.Order.create({
 				userId,
