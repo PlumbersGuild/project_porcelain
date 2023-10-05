@@ -18,10 +18,9 @@ const cartApi = api.injectEndpoints({
       }),
     }),
     deleteCartItem: builder.mutation({
-      query: (userInput) => ({
-        url: "/api/cart/delete",
+      query: (id) => ({
+        url: `/api/cart/delete/${id}`,
         method: "DELETE",
-        body: userInput,
       }),
     }),
     getCartItems: builder.query({
