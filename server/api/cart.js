@@ -140,9 +140,10 @@ router.post("/new", verify, async (req, res, next) => {
 });
 
 // UPDATE productId to book and adjust accordingly
-router.put("/update", async (req, res, next) => {
-  const { productId, qty } = req.body;
+router.put("/update/:id", verify, async (req, res, next) => {
+  console.log("BODY", req.body);
   const { userId } = req.user;
+  const { id } = req.body;
 
   try {
     const foundOrder = await prismaClient.Order.findFirst({
@@ -157,11 +158,14 @@ router.put("/update", async (req, res, next) => {
         where: {
           orderId_productId: {
             orderId: foundOrder.id,
-            productId,
+            productId: +req.params.id,
           },
         },
         data: {
-          qty,
+          qty: +req.body.body.qty,
+        },
+        include: {
+          product: true,
         },
       });
 

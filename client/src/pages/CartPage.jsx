@@ -4,61 +4,44 @@ import {
   useEditCartItemMutation,
   useDeleteCartItemMutation,
 } from "../reducers/cart";
-import { useState, useEffect } from "react";
+import CartItem from "../components/CartItem";
 
 function CartPage() {
   const cart = useSelector((state) => state.cart.cart);
 
-  const [editCartItem] = useEditCartItemMutation();
-  const [deleteCartItem] = useDeleteCartItemMutation();
-  const [totalPrice, setTotalPrice] = useState(0);
-  const [quantity, setQuantity] = useState(null);
-
-  const deleteCartItemHandler = async (id) => {
-    await deleteCartItem(id).then(() => {
-      location.reload();
-    });
-  };
-
-  useEffect(() => {
-    let prce = 0;
-    cart.forEach((item) => {
-      const qty = item.qty;
-      const price = item.price;
-      const newPrice = qty * price;
-      prce += newPrice;
-    });
-    setTotalPrice(prce);
-  }, [cart]);
+  const tPrice = cart.reduce((acc, curr) => acc + curr.price * curr.qty, 0);
 
   return (
     <>
       <div className="cartPage">
         <div className="cart_container">
+          <h1 className="shopping_title">Shopping Cart</h1>
           {cart.map((item) => (
-            <div key={item.id} className="cartItem__container">
-              <img src={item.product.image} />
-              <div className="productInfo__container">
-                <h1>{item.product.title}</h1>
-                <h2>{item.product.subtitle}</h2>
-                <h3 className="price">$ {item.price / 100}</h3>
-              </div>
-              <h3 className="qty">{item.qty}</h3>
-              <input
-                type="number"
-                value={item.qty}
-                onChange={(e) => setQuantity(e.target.value)}
-              />
-              <button
-                className="delete"
-                onClick={() => deleteCartItemHandler(item.productd)}
-              >
-                Delete Product
-              </button>
-            </div>
+            <CartItem key={item.id} item={item} />
           ))}
         </div>
-        <div className="checkout__container">BLAH BLAH BLAH</div>
+        <div className="checkout__container">
+          <h1>Summary</h1>
+          <div className="price_info">
+            <div className="subtotal">
+              <h2>SUBTOTAL</h2>
+              <h2>$ {tPrice / 100}</h2>
+            </div>
+            <div className="shipping">
+              <h2>SHIPPING</h2>
+              <h2>FREE</h2>
+            </div>
+            <div className="tax">
+              <h2>TAXES</h2>
+              <h2>NONE!</h2>
+            </div>
+          </div>
+          <div className="total">
+            <h2>TOTAL</h2>
+            <h2>$ {tPrice / 100}</h2>
+          </div>
+          <button>Checkout</button>
+        </div>
       </div>
     </>
   );

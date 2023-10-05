@@ -11,11 +11,14 @@ const cartApi = api.injectEndpoints({
       }),
     }),
     editCartItem: builder.mutation({
-      query: (userInput) => ({
-        url: "/api/cart/update",
-        method: "PUT",
-        body: userInput,
-      }),
+      query(data) {
+        const { id, ...body } = data;
+        return {
+          url: `/api/cart/update/${id}`,
+          method: "PUT",
+          body,
+        };
+      },
     }),
     deleteCartItem: builder.mutation({
       query: (id) => ({
@@ -48,6 +51,16 @@ const cartSlice = createSlice({
         (state, { payload }) => {
           return {
             cart: payload,
+          };
+        }
+      ),
+      builder.addMatcher(
+        cartApi.endpoints.editCartItem.matchFulfilled,
+        (state, { payload }) => {
+          return {
+            cart: state.cart.map((item) =>
+              item.product.id === payload.product.id ? payload : item
+            ),
           };
         }
       );
