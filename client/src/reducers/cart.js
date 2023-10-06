@@ -11,21 +11,30 @@ const cartApi = api.injectEndpoints({
       }),
     }),
     editCartItem: builder.mutation({
-      query: (userInput) => ({
-        url: "/api/cart/update",
-        method: "PUT",
-        body: userInput,
-      }),
+      query(data) {
+        const { id, ...body } = data;
+        return {
+          url: `/api/cart/update/${id}`,
+          method: "PUT",
+          body,
+        };
+      },
     }),
     deleteCartItem: builder.mutation({
-      query: (userInput) => ({
-        url: "/api/cart/delete",
+      query: (id) => ({
+        url: `/api/cart/delete/${id}`,
         method: "DELETE",
-        body: userInput,
       }),
     }),
     getCartItems: builder.query({
       query: () => "/api/cart",
+    }),
+    submitOrder: builder.mutation({
+      query: (userInput) => ({
+        url: "/api/order/submit",
+        method: "POST",
+        body: userInput,
+      }),
     }),
   }),
 });
@@ -51,6 +60,16 @@ const cartSlice = createSlice({
             cart: payload,
           };
         }
+      ),
+      builder.addMatcher(
+        cartApi.endpoints.editCartItem.matchFulfilled,
+        (state, { payload }) => {
+          return {
+            cart: state.cart.map((item) =>
+              item.product.id === payload.product.id ? payload : item
+            ),
+          };
+        }
       );
   },
 });
@@ -60,6 +79,7 @@ export const {
   useEditCartItemMutation,
   useDeleteCartItemMutation,
   useGetCartItemsQuery,
+  useSubmitOrderMutation,
 } = cartApi;
 
 export default cartSlice.reducer;

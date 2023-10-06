@@ -22,7 +22,11 @@ router.get("/", verify, async (req, res, next) => {
         isFulfilled: false,
       },
       include: {
-        CartItem: true,
+        CartItem: {
+          include: {
+            product: true,
+          },
+        },
       },
     });
 
@@ -136,9 +140,10 @@ router.post("/new", verify, async (req, res, next) => {
 });
 
 // UPDATE productId to book and adjust accordingly
-router.put("/update", async (req, res, next) => {
-  const { productId, qty } = req.body;
+router.put("/update/:id", verify, async (req, res, next) => {
+  console.log("BODY", req.body);
   const { userId } = req.user;
+  const { id } = req.body;
 
   try {
     const foundOrder = await prismaClient.Order.findFirst({
@@ -153,11 +158,14 @@ router.put("/update", async (req, res, next) => {
         where: {
           orderId_productId: {
             orderId: foundOrder.id,
-            productId,
+            productId: +req.params.id,
           },
         },
         data: {
-          qty,
+          qty: +req.body.body.qty,
+        },
+        include: {
+          product: true,
         },
       });
 
@@ -178,8 +186,9 @@ router.put("/update", async (req, res, next) => {
   }
 });
 
-router.delete("/delete", async (req, res, next) => {
-  const { productId } = req.body;
+router.delete("/delete/:id", verify, async (req, res, next) => {
+  //   const { productId } = req.body;
+  console.log(req.body);
   const { userId } = req.user;
 
   try {
@@ -198,7 +207,7 @@ router.delete("/delete", async (req, res, next) => {
 
     const foundCartItem = await prismaClient.cartItem.findFirst({
       where: {
-        productId,
+        productId: +req.params.id,
       },
     });
 
