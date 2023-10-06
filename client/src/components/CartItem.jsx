@@ -17,13 +17,23 @@ const CartItem = ({ item }) => {
     refetch();
   };
 
-  const handleEditCart = async (e, productId) => {
-    setQuantity(e.target.value);
-    console.log("EEE", e);
+  const handleEditCartIncrement = async (productId) => {
+    setQuantity(quantity + 1);
     await editCartItem({
       id: productId,
       body: {
         qty: +quantity + 1,
+      },
+    });
+  };
+
+  const handleEditCartDecrement = async (productId) => {
+    if (quantity <= 1) return;
+    setQuantity(quantity - 1);
+    await editCartItem({
+      id: productId,
+      body: {
+        qty: +quantity - 1,
       },
     });
   };
@@ -36,12 +46,21 @@ const CartItem = ({ item }) => {
         <h2>{item.product.subtitle}</h2>
         <h3 className="price">$ {item.price / 100}</h3>
       </div>
-      <input
-        type="number"
-        min={1}
-        value={quantity}
-        onChange={(e) => handleEditCart(e, item.productId)}
-      />
+      <div className="qty_buttons">
+        <button
+          className="minus"
+          onClick={() => handleEditCartDecrement(item.productId)}
+        >
+          -
+        </button>
+        <div>{quantity}</div>
+        <button
+          className="plus"
+          onClick={() => handleEditCartIncrement(item.productId)}
+        >
+          +
+        </button>
+      </div>
       <button
         className="delete"
         onClick={() => deleteCartItemHandler(item.productId)}

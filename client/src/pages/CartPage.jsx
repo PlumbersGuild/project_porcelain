@@ -9,6 +9,7 @@ function CartPage() {
   const cart = useSelector((state) => state.cart.cart);
 
   const tPrice = cart.reduce((acc, curr) => acc + curr.price * curr.qty, 0);
+  console.log(tPrice);
   const [submitOrder] = useSubmitOrderMutation();
   const { refetch } = useGetCartItemsQuery();
   const submitOrderHandler = async () => {
