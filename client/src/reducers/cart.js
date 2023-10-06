@@ -1,8 +1,8 @@
 import { api } from "./api";
 import { createSlice } from "@reduxjs/toolkit";
+import { authApi } from "./auth";
 
 const cartApi = api.injectEndpoints({
-
   endpoints: (builder) => ({
     addNewCartItem: builder.mutation({
       query: (userInput) => ({
@@ -70,6 +70,20 @@ const cartSlice = createSlice({
               item.product.id === payload.product.id ? payload : item
             ),
           };
+        }
+      ),
+      builder.addMatcher(
+        authApi.endpoints.logout.matchFulfilled,
+        (state, { payload }) => {
+          return {
+            cart: [],
+          };
+        }
+      ),
+      builder.addMatcher(
+        authApi.endpoints.login.matchFulfilled,
+        (state, { payload }) => {
+          return { cart: payload.cart };
         }
       );
   },
