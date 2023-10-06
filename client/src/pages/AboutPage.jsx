@@ -6,7 +6,7 @@ function AboutPage() {
       </div>
 
       <div className="about-us">
-        <h1>About Us</h1>
+        <h1 className="about">About Us</h1>
 
         <div className="description">
           <p>
@@ -32,7 +32,7 @@ function AboutPage() {
       </div>
 
       <div className="contributors">
-        <h1>Contributors</h1>
+        <h1 className="about">Contributors</h1>
       </div>
       <div className="container">
         <div className="card">

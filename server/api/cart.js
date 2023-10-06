@@ -5,10 +5,7 @@ const prismaClient = new PrismaClient();
 const verify = require("../auth/verify");
 
 router.get("/", verify, async (req, res, next) => {
-
   const { userId } = req.user;
-
-  
 
   try {
     const foundOrder = await prismaClient.order.findFirst({
@@ -26,107 +23,96 @@ router.get("/", verify, async (req, res, next) => {
     });
 
     if (foundOrder) {
-
       res.status(200).json(foundOrder.CartItem);
     }
   } catch (error) {
     console.error(error.message);
     next(error);
   }
-
 });
 
 router.post("/new", verify, async (req, res, next) => {
-	const { book, qty } = req.body;
-	const { userId } = req.user;
+  const { book, qty } = req.body;
+  const { userId } = req.user;
 
+  try {
+    // product -> cartItem -> order
+    const foundOrder = await prismaClient.Order.findFirst({
+      where: {
+        userId: userId,
+        isFulfilled: false,
+      },
+    });
 
-	try {
-		// product -> cartItem -> order
-		const foundOrder = await prismaClient.Order.findFirst({
-			where: {
-				userId: userId,
-				isFulfilled: false,
-			},
-		});
+    console.log(`\n [DEBUG] foundOrder: `, foundOrder);
 
-		console.log(`\n [DEBUG] foundOrder: `, foundOrder);
+    if (foundOrder) {
+      const foundProduct = await prismaClient.product.findUnique({
+        where: {
+          id: book.id,
+        },
+      });
 
-		if (foundOrder) {
-			const foundProduct =
-				await prismaClient.product.findUnique({
-					where: {
-						id: book.id,
-					},
-				});
+      console.log(`\n [DEBUG] foundProduct: `, foundProduct);
 
-			console.log(
-				`\n [DEBUG] foundProduct: `,
-				foundProduct
-			);
+      if (!foundProduct) {
+        res.status(404).json({
+          message: "Could not find product",
+        });
+      }
 
-			if (!foundProduct) {
-				res.status(404).json({
-					message: "Could not find product",
-				});
-			}
+      const duplicateCartItem = await prismaClient.cartItem.findUnique({
+        where: {
+          orderId_productId: {
+            orderId: foundOrder.id,
+            productId: foundProduct.id,
+          },
+        },
+      });
 
-			const duplicateCartItem =
-				await prismaClient.cartItem.findUnique({
-					where: {
-						orderId_productId: {
-							orderId: foundOrder.id,
-							productId: foundProduct.id,
-						},
-					},
-				});
-
-			if (duplicateCartItem) {
-				const newQty = duplicateCartItem.qty + qty;
-				const updated = await prismaClient.cartItem.update({
-					where: {
-						orderId_productId: {
-							orderId: foundOrder.id,
-							productId: foundProduct.id,
-						},
-					},
-					data: {
-						qty: newQty,
-					},
-				});
-				const order = await prismaClient.order.findFirst({
-					where: {
-						userId: userId,
-						isFulfilled: false,
-					},
-					include: {
-						CartItem: true,
-					},
-				});
-				res.status(200).json(order.CartItem);
-			} else {
-				const createdCartItem =
-					await prismaClient.cartItem.create({
-						data: {
-							orderId: foundOrder.id,
-							qty,
-							price: book.price,
-							productId: foundProduct.id,
-						},
-					});
-				res.status(201).json(createdCartItem);
-			}
-		} else {
-			const createdOrder = prismaClient.Order.create({
-				userId,
-			});
-
-			);
-		}
-	} catch (error) {
-		console.error(error.message);
-		next(error);
-	}
+      if (duplicateCartItem) {
+        const newQty = duplicateCartItem.qty + qty;
+        const updated = await prismaClient.cartItem.update({
+          where: {
+            orderId_productId: {
+              orderId: foundOrder.id,
+              productId: foundProduct.id,
+            },
+          },
+          data: {
+            qty: newQty,
+          },
+        });
+        const order = await prismaClient.order.findFirst({
+          where: {
+            userId: userId,
+            isFulfilled: false,
+          },
+          include: {
+            CartItem: true,
+          },
+        });
+        res.status(200).json(order.CartItem);
+      } else {
+        const createdCartItem = await prismaClient.cartItem.create({
+          data: {
+            orderId: foundOrder.id,
+            qty,
+            price: book.price,
+            productId: foundProduct.id,
+          },
+        });
+        res.status(201).json(createdCartItem);
+      }
+    } else {
+      const createdOrder = prismaClient.Order.create({
+        userId,
+      });
+    }
+  } catch (error) {
+    console.error(error.message);
+    next(error);
+  }
 });
 
 // UPDATE productId to book and adjust accordingly
