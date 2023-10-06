@@ -29,6 +29,13 @@ const cartApi = api.injectEndpoints({
     getCartItems: builder.query({
       query: () => "/api/cart",
     }),
+    submitOrder: builder.mutation({
+      query: (userInput) => ({
+        url: "/api/order/submit",
+        method: "POST",
+        body: userInput,
+      }),
+    }),
   }),
 });
 
@@ -72,6 +79,7 @@ export const {
   useEditCartItemMutation,
   useDeleteCartItemMutation,
   useGetCartItemsQuery,
+  useSubmitOrderMutation,
 } = cartApi;
 
 export default cartSlice.reducer;

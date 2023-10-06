@@ -2,6 +2,7 @@ import { useState } from "react";
 import {
   useDeleteCartItemMutation,
   useEditCartItemMutation,
+  useGetCartItemsQuery,
 } from "../reducers/cart";
 
 const CartItem = ({ item }) => {
@@ -10,15 +11,15 @@ const CartItem = ({ item }) => {
   const [editCartItem] = useEditCartItemMutation();
   const [quantity, setQuantity] = useState(item.qty);
   const [deleteCartItem] = useDeleteCartItemMutation();
-
+  const { refetch } = useGetCartItemsQuery();
   const deleteCartItemHandler = async (id) => {
-    await deleteCartItem(id).then(() => {
-      location.reload();
-    });
+    await deleteCartItem(id);
+    refetch();
   };
 
   const handleEditCart = async (e, productId) => {
     setQuantity(e.target.value);
+    console.log("EEE", e);
     await editCartItem({
       id: productId,
       body: {
@@ -37,6 +38,7 @@ const CartItem = ({ item }) => {
       </div>
       <input
         type="number"
+        min={1}
         value={quantity}
         onChange={(e) => handleEditCart(e, item.productId)}
       />

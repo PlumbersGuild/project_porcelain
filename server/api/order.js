@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { PrismaClient } = require("@prisma/client");
-const { verify } = require("jsonwebtoken");
+const verify = require("../auth/verify");
 const prismaClient = new PrismaClient();
 
 /**
@@ -36,9 +36,24 @@ router.post("/submit", verify, async (req, res, next) => {
         res.status(404).json({
           message: "Could not find order",
         });
+        return;
       }
-      foundOrder.isFulfilled = true;
-      res.status(201).json(foundOrder);
+      const fulfilledOrder = await prismaClient.order.update({
+        where: {
+          id: foundOrder.id,
+        },
+        data: {
+          isFulfilled: true,
+        },
+      });
+
+      const newOrder = await prismaClient.order.create({
+        data: {
+          userId: foundUser.id,
+          isFulfilled: false,
+        },
+      });
+      res.status(201).json(newOrder);
     }
   } catch (error) {
     console.error(error.message);

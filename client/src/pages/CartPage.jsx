@@ -1,16 +1,20 @@
 import { useSelector } from "react-redux";
-import {
-  useGetCartItemsQuery,
-  useEditCartItemMutation,
-  useDeleteCartItemMutation,
-} from "../reducers/cart";
 import CartItem from "../components/CartItem";
+import {
+  useSubmitOrderMutation,
+  useGetCartItemsQuery,
+} from "../reducers/cart.js";
 
 function CartPage() {
   const cart = useSelector((state) => state.cart.cart);
 
   const tPrice = cart.reduce((acc, curr) => acc + curr.price * curr.qty, 0);
-
+  const [submitOrder] = useSubmitOrderMutation();
+  const { refetch } = useGetCartItemsQuery();
+  const submitOrderHandler = async () => {
+    await submitOrder();
+    refetch();
+  };
   return (
     <>
       <div className="cartPage">
@@ -40,7 +44,7 @@ function CartPage() {
             <h2>TOTAL</h2>
             <h2>$ {tPrice / 100}</h2>
           </div>
-          <button>Checkout</button>
+          <button onClick={submitOrderHandler}>Checkout</button>
         </div>
       </div>
     </>
