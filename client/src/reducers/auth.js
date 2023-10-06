@@ -29,7 +29,6 @@ const authApi = api.injectEndpoints({
 });
 
 function storeToken(state, { payload }) {
-	console.log(state);
 	state.credentials = {
 		token: payload.token,
 	};

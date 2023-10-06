@@ -2,6 +2,7 @@ import { api } from "./api";
 import { createSlice } from "@reduxjs/toolkit";
 
 const cartApi = api.injectEndpoints({
+
   endpoints: (builder) => ({
     addNewCartItem: builder.mutation({
       query: (userInput) => ({

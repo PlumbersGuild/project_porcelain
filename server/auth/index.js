@@ -4,10 +4,11 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const verify = require("./verify");
 
 router.post("/register", async (req, res, next) => {
 	const salt_rounds = 5;
+
+	console.log(req.body);
 
 	const hashedPassword = await bcrypt.hash(
 		req.body.password,

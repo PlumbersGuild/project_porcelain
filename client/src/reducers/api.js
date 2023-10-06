@@ -16,11 +16,16 @@ export const api = createApi({
 				return headers;
 			}
 
+			console.log("credentials");
+
 			const token = credentials.token;
 
 			if (token) {
 				headers.set("Authorization", token);
 			}
+			// else {
+
+			// }
 			return headers;
 		},
 	}),
