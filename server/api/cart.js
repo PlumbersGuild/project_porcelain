@@ -5,50 +5,41 @@ const prismaClient = new PrismaClient();
 const verify = require("../auth/verify");
 
 router.get("/", verify, async (req, res, next) => {
-	const { userId } = req.user;
 
-	try {
-		const foundOrder = await prismaClient.order.findFirst({
-			where: {
-				userId: userId,
-				isFulfilled: false,
-			},
-			include: {
-				CartItem: true,
-			},
-		});
+  const { userId } = req.user;
 
-		if (foundOrder) {
-			console.log("testOrder", foundOrder);
-			res.status(200).json(foundOrder.CartItem);
-		} else {
-			console.log(`cannot find order`);
-			res
-				.status(404)
-				.json({ message: "Could not find order" });
-		}
-	} catch (error) {
-		console.error(error.message);
-		next(error);
-	}
+  
+
+  try {
+    const foundOrder = await prismaClient.order.findFirst({
+      where: {
+        userId: userId,
+        isFulfilled: false,
+      },
+      include: {
+        CartItem: {
+          include: {
+            product: true,
+          },
+        },
+      },
+    });
+
+    if (foundOrder) {
+
+      res.status(200).json(foundOrder.CartItem);
+    }
+  } catch (error) {
+    console.error(error.message);
+    next(error);
+  }
+
 });
 
 router.post("/new", verify, async (req, res, next) => {
 	const { book, qty } = req.body;
 	const { userId } = req.user;
 
-	console.log(`\n [DEBUG] book: `, req.body);
-
-	console.log(req.user);
-
-	// if (!userId) {
-	// 	const foundProduct =
-	// 		await prismaClient.product.findFirst({
-	// 			where: {
-	// 				id: productId,
-	// 			},
-	// 		});
-	// }
 
 	try {
 		// product -> cartItem -> order
@@ -130,9 +121,6 @@ router.post("/new", verify, async (req, res, next) => {
 				userId,
 			});
 
-			console.log(
-				`\n [DEBUG] createdOrder: `,
-				createdOrder
 			);
 		}
 	} catch (error) {
@@ -142,94 +130,93 @@ router.post("/new", verify, async (req, res, next) => {
 });
 
 // UPDATE productId to book and adjust accordingly
-router.put("/update", async (req, res, next) => {
-	const { productId, qty } = req.body;
-	const { userId } = req.user;
 
-	try {
-		const foundOrder = await prismaClient.Order.findFirst({
-			where: {
-				userId: userId,
-				isFulfilled: false,
-			},
-		});
+router.put("/update/:id", verify, async (req, res, next) => {
+  console.log("BODY", req.body);
+  const { userId } = req.user;
+  const { id } = req.body;
 
-		if (foundOrder) {
-			const updateCartItem =
-				await prismaClient.cartItem.update({
-					where: {
-						orderId_productId: {
-							orderId: foundOrder.id,
-							productId,
-						},
-					},
-					data: {
-						qty,
-					},
-				});
+  try {
+    const foundOrder = await prismaClient.Order.findFirst({
+      where: {
+        userId: userId,
+        isFulfilled: false,
+      },
+    });
 
-			if (!updateCartItem) {
-				res.status(400).json({
-					message: "Could not update cart item",
-				});
-			}
-			res.status(200).json(updateCartItem);
-		} else {
-			res.status(404).json({
-				message: "Could not find order",
-			});
-		}
-	} catch (error) {
-		console.error(error.message);
-		next(error);
-	}
+    if (foundOrder) {
+      const updateCartItem = await prismaClient.cartItem.update({
+        where: {
+          orderId_productId: {
+            orderId: foundOrder.id,
+            productId: +req.params.id,
+          },
+        },
+        data: {
+          qty: +req.body.body.qty,
+        },
+        include: {
+          product: true,
+        },
+      });
+
+      if (!updateCartItem) {
+        res.status(400).json({
+          message: "Could not update cart item",
+        });
+      }
+      res.status(200).json(updateCartItem);
+    } else {
+      res.status(404).json({
+        message: "Could not find order",
+      });
+    }
+  } catch (error) {
+    console.error(error.message);
+    next(error);
+  }
 });
 
-router.delete("/delete", async (req, res, next) => {
-	const { productId } = req.body;
-	const { userId } = req.user;
+router.delete("/delete/:id", verify, async (req, res, next) => {
+  const { userId } = req.user;
 
-	try {
-		const foundOrder = await prismaClient.Order.findFirst({
-			where: {
-				userId: userId,
-				isFulfilled: false,
-			},
-		});
+  try {
+    const foundOrder = await prismaClient.Order.findFirst({
+      where: {
+        userId: userId,
+        isFulfilled: false,
+      },
+    });
 
-		if (!foundOrder) {
-			res.status(400).json({
-				message: "Cannot delete b/c cannot locate order",
-			});
-		}
+    if (!foundOrder) {
+      res.status(400).json({
+        message: "Cannot delete b/c cannot locate order",
+      });
+    }
 
-		const foundCartItem =
-			await prismaClient.cartItem.findFirst({
-				where: {
-					productId,
-				},
-			});
+    const foundCartItem = await prismaClient.cartItem.findFirst({
+      where: {
+        productId: +req.params.id,
+      },
+    });
 
-		const deletedCartItem =
-			await prismaClient.cartItem.delete({
-				where: {
-					orderId_productId: {
-						orderId: foundCartItem.orderId,
-						productId: foundCartItem.productId,
-					},
-				},
-			});
+    const deletedCartItem = await prismaClient.cartItem.delete({
+      where: {
+        orderId_productId: {
+          orderId: foundCartItem.orderId,
+          productId: foundCartItem.productId,
+        },
+      },
+    });
 
-		if (!deletedCartItem) {
-			res
-				.status(400)
-				.json({ message: "Could not delete cart item" });
-		}
-		res.status(200).json(deletedCartItem);
-	} catch (error) {
-		console.error(error.message);
-		next(error);
-	}
+    if (!deletedCartItem) {
+      res.status(400).json({ message: "Could not delete cart item" });
+    }
+    res.status(200).json(deletedCartItem);
+  } catch (error) {
+    console.error(error.message);
+    next(error);
+  }
 });
 
 module.exports = router;

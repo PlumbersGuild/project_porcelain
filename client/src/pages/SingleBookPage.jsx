@@ -3,9 +3,13 @@ import { useParams } from "react-router-dom";
 import Placeholder from "../assets/placeholder.png";
 
 import { useSelector } from "react-redux";
-import { useAddNewCartItemMutation } from "../reducers/cart";
+import {
+  useAddNewCartItemMutation,
+  useGetCartItemsQuery,
+} from "../reducers/cart";
 
 const SingleBookPage = () => {
+
 	const { id } = useParams();
 	const {
 		data: book,
@@ -20,13 +24,17 @@ const SingleBookPage = () => {
 	const cart = useSelector((state) => state.cart.cart);
 	console.log(`cart: `, cart);
 
-	if (isLoading) {
-		return <div>Loading...</div>;
-	}
 
-	if (isError) {
-		return <div>Error loading book data</div>;
-	}
+  const { refetch } = useGetCartItemsQuery();
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+
+  if (isError) {
+    return <div>Error loading book data</div>;
+  }
+
 
 	const handleAddToCart = async (book, qty) => {
 		// if guestCart exists -> get it from localStorage
@@ -69,6 +77,7 @@ const SingleBookPage = () => {
 			}
 		} else {
 			addNewCartItem(addBook);
+      refetch();
 		}
 	};
 
