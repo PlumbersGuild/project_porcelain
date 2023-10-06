@@ -16,8 +16,6 @@ router.post("/submit", async (req, res, next) => {
 			},
 		});
 
-		console.log(`foundUser: `, foundUser);
-
 		// product -> cartItem -> order
 
 		if (foundUser) {

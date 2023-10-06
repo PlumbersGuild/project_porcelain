@@ -13,6 +13,12 @@ const SingleBookPage = () => {
 		isError,
 	} = useGetBookByIdQuery(id);
 	const [addNewCartItem] = useAddNewCartItemMutation();
+	const user = useSelector(
+		(state) => state.auth.credentials?.token
+	);
+
+	const cart = useSelector((state) => state.cart.cart);
+	console.log(`cart: `, cart);
 
 	if (isLoading) {
 		return <div>Loading...</div>;
@@ -23,8 +29,47 @@ const SingleBookPage = () => {
 	}
 
 	const handleAddToCart = async (book, qty) => {
-		const userInput = { ...book, qty };
-		await addNewCartItem(userInput);
+		// if guestCart exists -> get it from localStorage
+		// if doesn't exist -> make an empty array
+		const guestCart =
+			window.localStorage.getItem("cart") != null
+				? JSON.parse(window.localStorage.getItem("cart"))
+				: [];
+		const addBook = { ...book, qty };
+
+		// for guest users
+		if (!user) {
+			// find if theres already an item in the localStorage
+			const existingItem = guestCart.find(
+				(item) => item.book?.id == addBook.book.id
+			);
+
+			// if item is not already inside localStorage
+			if (!existingItem) {
+				guestCart.push(addBook);
+				window.localStorage.setItem(
+					"cart",
+					JSON.stringify(guestCart)
+				);
+			} else {
+				// incremement qty
+				existingItem.qty += 1;
+				// map to include the existingItem
+				const newGuestCart = guestCart.map((item) => {
+					if (item.book == existingItem.book) {
+						return existingItem;
+					}
+					return item;
+				});
+				// reset the cart to include the new guestCart
+				window.localStorage.setItem(
+					"cart",
+					JSON.stringify(newGuestCart)
+				);
+			}
+		} else {
+			addNewCartItem(addBook);
+		}
 	};
 
 	return (

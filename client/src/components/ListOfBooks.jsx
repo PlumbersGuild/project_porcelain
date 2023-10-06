@@ -4,7 +4,6 @@ import Placeholder from "../assets/placeholder.png";
 import { Link } from "react-router-dom";
 
 function ListOfBooks() {
-
 	const [books, setBooks] = useState([]);
 
 	const { isLoading, data, error } = useGetBooksQuery();
@@ -12,10 +11,6 @@ function ListOfBooks() {
 	useEffect(() => {
 		if (error) {
 			console.log("Error has occurred");
-		}
-
-		if (isLoading) {
-			console.log("Loading...");
 		}
 		if (data) {
 			setBooks(data);
