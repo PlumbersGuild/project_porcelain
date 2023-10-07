@@ -4,6 +4,7 @@ import {
 	useSubmitOrderMutation,
 	useGetCartItemsQuery,
 } from "../reducers/cart.js";
+import "../styles/cart.scss";
 
 function CartPage() {
 	const cart = useSelector((state) => state.cart.cart);
@@ -47,7 +48,7 @@ function CartPage() {
 						</div>
 					</div>
 					<div className="total">
-						<h2>TOTAL</h2>
+						<h2>TOTAL: </h2>
 						<h2>$ {tPrice / 100}</h2>
 					</div>
 					<button onClick={submitOrderHandler}>

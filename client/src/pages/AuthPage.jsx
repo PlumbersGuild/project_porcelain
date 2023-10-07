@@ -6,7 +6,8 @@ import Home from "./Home";
 function AuthPage() {
 	const me = useSelector(
 		(state) => state.auth.credentials.token
-	);
+  );
+  
 
 	const guestRouter = (
 		<Routes>

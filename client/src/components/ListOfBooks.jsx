@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useGetBooksQuery } from "../reducers/api";
 import Placeholder from "../assets/placeholder.png";
 import { Link } from "react-router-dom";
+import "../styles/listOfBooks.scss";
 
 function ListOfBooks() {
 	const [books, setBooks] = useState([]);

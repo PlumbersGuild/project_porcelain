@@ -39,7 +39,11 @@ function AuthForm() {
 
 		try {
 			setLoading(true);
-			await authMethod(credentials).unwrap();
+			await authMethod(credentials)
+				.unwrap()
+				.then(() => {
+					console.log("hello you!");
+				});
 			//   refetch();
 		} catch (error) {
 			setLoading(false);

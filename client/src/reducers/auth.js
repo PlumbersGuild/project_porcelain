@@ -62,6 +62,13 @@ const authSlice = createSlice({
 		builder.addMatcher(
 			api.endpoints.logout.matchFulfilled,
 			(state, action) => {
+				const CREDENTIALS = "credentials";
+				state.credentials = {
+					token: "",
+				};
+				window.sessionStorage.removeItem(CREDENTIALS);
+
+				window.sessionStorage.removeItem("token");
 				window.localStorage.removeItem("cart");
 			}
 		);

@@ -1,5 +1,5 @@
 import { useGetBookByIdQuery } from "../reducers/api";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Placeholder from "../assets/placeholder.png";
 
 import { useSelector } from "react-redux";
@@ -7,9 +7,11 @@ import {
 	useAddNewCartItemMutation,
 	useGetCartItemsQuery,
 } from "../reducers/cart";
+import "../styles/singleBook.scss";
 
 const SingleBookPage = () => {
 	const { id } = useParams();
+	const navigate = useNavigate();
 	const {
 		data: book,
 		isLoading,
@@ -70,10 +72,11 @@ const SingleBookPage = () => {
 					"cart",
 					JSON.stringify(newGuestCart)
 				);
+				navigate("/");
 			}
 		} else {
 			await addNewCartItem(addBook);
-			refetch();
+			navigate("/");
 		}
 	};
 
@@ -87,18 +90,25 @@ const SingleBookPage = () => {
 			</div>
 			<div className="information__container">
 				<div className="title__container">
-					<h2>{book.title}</h2>
-					<h3>{book.subtitle}</h3>
+					<h2>Name: {book.title}</h2>
+					<h3>Subtitle: {book.subtitle}</h3>
 				</div>
-				<div className="lorem">
-					Lorem ipsum dolor sit amet consectetur adipisicing
-					elit. Reiciendis nesciunt officiis nulla ad nobis!
-					Delectus repudiandae, quibusdam, vero laborum odit
-					atque temporibus unde ullam minus mollitia
-					voluptatem est ipsum nisi.
-				</div>
+				<p className="lorem">
+					Description: Lorem ipsum dolor sit amet
+					consectetur adipisicing elit. Reiciendis nesciunt
+					officiis nulla ad nobis! Delectus repudiandae,
+					quibusdam, vero laborum odit atque temporibus unde
+					ullam minus mollitia voluptatem est ipsum nisi.
+					Lorem ipsum, dolor sit amet consectetur
+					adipisicing elit. Provident consequuntur
+					temporibus quibusdam non, molestiae expedita
+					quisquam, pariatur veritatis consequatur assumenda
+					obcaecati accusamus iusto animi odit ratione quod
+					eligendi doloremque quae?
+				</p>
 				<h4>$ {book.price / 100}</h4>
 				<button
+					className="addToCart"
 					onClick={() => handleAddToCart({ book }, 1)}
 					type="button">
 					Add to Cart
