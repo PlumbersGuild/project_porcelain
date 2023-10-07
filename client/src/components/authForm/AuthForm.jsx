@@ -40,10 +40,7 @@ function AuthForm() {
 		try {
 			setLoading(true);
 			await authMethod(credentials)
-				.unwrap()
-				.then(() => {
-					console.log("hello you!");
-				});
+				.unwrap();
 			//   refetch();
 		} catch (error) {
 			setLoading(false);
