@@ -9,60 +9,57 @@ const prismaClient = new PrismaClient();
  */
 
 router.post("/submit", verify, async (req, res, next) => {
-	const { userId } = req.user;
+  const { userId } = req.user;
 
-	try {
-		const foundUser = await prismaClient.user.findFirst({
-			where: {
-				id: userId,
-			},
-		});
+  try {
+    const foundUser = await prismaClient.user.findFirst({
+      where: {
+        id: userId,
+      },
+    });
 
-		console.log(`foundUser: `, foundUser);
+    console.log(`foundUser: `, foundUser);
 
-		// product -> cartItem -> order
+    // product -> cartItem -> order
 
-		if (foundUser) {
-			const foundOrder = await prismaClient.order.findFirst(
-				{
-					where: {
-						isFulfilled: false,
-						userId: foundUser.id,
-					},
-					include: {
-						CartItem: true,
-					},
-				}
-			);
+    if (foundUser) {
+      const foundOrder = await prismaClient.order.findFirst({
+        where: {
+          isFulfilled: false,
+          userId: foundUser.id,
+        },
+        include: {
+          CartItem: true,
+        },
+      });
 
-			if (!foundOrder) {
-				res.status(404).json({
-					message: "Could not find order",
-				});
-				return;
-			}
-			const fulfilledOrder =
-				await prismaClient.order.update({
-					where: {
-						id: foundOrder.id,
-					},
-					data: {
-						isFulfilled: true,
-					},
-				});
+      if (!foundOrder) {
+        res.status(404).json({
+          message: "Could not find order",
+        });
+        return;
+      }
+      const fulfilledOrder = await prismaClient.order.update({
+        where: {
+          id: foundOrder.id,
+        },
+        data: {
+          isFulfilled: true,
+        },
+      });
 
-			const newOrder = await prismaClient.order.create({
-				data: {
-					userId: foundUser.id,
-					isFulfilled: false,
-				},
-			});
-			res.status(201).json(newOrder);
-		}
-	} catch (error) {
-		console.error(error.message);
-		next(error);
-	}
+      const newOrder = await prismaClient.order.create({
+        data: {
+          userId: foundUser.id,
+          isFulfilled: false,
+        },
+      });
+      res.status(201).json(newOrder);
+    }
+  } catch (error) {
+    console.error(error.message);
+    next(error);
+  }
 });
 
 module.exports = router;
