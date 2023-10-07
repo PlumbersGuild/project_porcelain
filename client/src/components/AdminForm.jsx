@@ -4,7 +4,7 @@ import {
 } from "../reducers/api";
 import { useState } from "react";
 import Placeholder from "../assets/placeholder.png";
-
+import { Link } from "react-router-dom";
 function AdminForm({ book }) {
   const [editProduct] = useEditProductMutation();
   const [deleteProduct] = useDeleteProductMutation();
@@ -12,7 +12,6 @@ function AdminForm({ book }) {
   const [title, setTitle] = useState(book.title);
   const [subtitle, setSubtitle] = useState(book.subtitle);
   const [price, setPrice] = useState(book.price);
-
   const handleEditProduct = async (e) => {
     e.preventDefault();
     await editProduct({
@@ -26,35 +25,57 @@ function AdminForm({ book }) {
       location.reload();
     });
   };
+
+  const handleDeleteProduct = async (id) => {
+    await deleteProduct(id);
+  };
   return (
-    <div>
-      <button onClick={() => setEditProductToggle(!editProductToggle)}>
-        Edit Product
-      </button>
+    <div className="form_container">
+      <div>
+        <button
+          className="edit_toggle"
+          onClick={() => setEditProductToggle(!editProductToggle)}
+        >
+          Edit Product
+        </button>
+        <Link to={"/"}>
+          <button
+            className="delete_button"
+            onClick={() => handleDeleteProduct(book.id)}
+          >
+            Delete Product
+          </button>
+        </Link>
+      </div>
+
       {editProductToggle && (
-        <form onSubmit={(e) => handleEditProduct(e)}>
-          <label>Title:</label>
+        <form onSubmit={(e) => handleEditProduct(e)} className="admin_form">
+          <label className="label">Title:</label>
           <input
+            className="input"
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
-          <label>Subtitle</label>
+          <label className="label">Subtitle</label>
           <input
+            className="input"
             type="text"
             value={subtitle}
             onChange={(e) => setSubtitle(e.target.value)}
           />
-          <label>Price:</label>
+          <label className="label">Price:</label>
           <input
+            className="price_input"
             type="text"
             value={price}
             onChange={(e) => setPrice(e.target.value)}
           />
-          <button type="submit">Save Changes</button>
+          <button className="submitEdit" type="submit">
+            Save Changes
+          </button>
         </form>
       )}
-      <button>Delete Product</button>
     </div>
   );
 }

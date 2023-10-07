@@ -37,7 +37,7 @@ export const api = createApi({
       query(data) {
         const { id, ...body } = data;
         return {
-          url: `/admin/products/${id}`,
+          url: `api/admin/products/${id}`,
           method: "PUT",
           body,
         };
@@ -45,14 +45,14 @@ export const api = createApi({
     }),
     addProduct: builder.mutation({
       query: (userInput) => ({
-        url: "/admin/products/new",
+        url: "api/admin/products/new",
         method: "POST",
         body: userInput,
       }),
     }),
     deleteProduct: builder.mutation({
       query: (id) => ({
-        url: `admin/products/${id}`,
+        url: `api/admin/products/${id}`,
         method: "DELETE",
       }),
     }),

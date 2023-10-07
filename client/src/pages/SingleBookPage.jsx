@@ -70,7 +70,6 @@ const SingleBookPage = () => {
     window.sessionStorage.key("user") &&
     JSON.parse(window.sessionStorage.getItem("user"));
 
-  console.log("admin", adminUser);
   return (
     <div className="main__container">
       <div className="img__container">
@@ -91,7 +90,11 @@ const SingleBookPage = () => {
         <button onClick={() => handleAddToCart({ book }, 1)} type="button">
           Add to Cart
         </button>
-        {adminUser.isAdmin === true ? <AdminForm book={book} /> : <></>}
+        {window.sessionStorage.key("user") && adminUser.isAdmin === true ? (
+          <AdminForm book={book} />
+        ) : (
+          <></>
+        )}
       </div>
     </div>
   );

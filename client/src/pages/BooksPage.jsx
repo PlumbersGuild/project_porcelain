@@ -1,20 +1,88 @@
 import { useGetBooksQuery } from "../reducers/api";
 import { Link } from "react-router-dom";
 import Placeholder from "../assets/placeholder.png";
-
+import { useAddProductMutation } from "../reducers/api";
+import { useState } from "react";
 function BooksPage() {
   const { data, isLoading } = useGetBooksQuery();
+  const [addProduct] = useAddProductMutation();
+  const [addProductToggle, setAddProductToggle] = useState(false);
+  const [title, setTitle] = useState("");
+  const [subtitle, setSubtitle] = useState("");
+  const [price, setPrice] = useState("");
+  const [category, setCategory] = useState("");
   if (isLoading) {
     return <h1>LOADING...</h1>;
   }
+  const handleAddProduct = async () => {
+    await addProduct({
+      title: title,
+      subtitle: subtitle,
+      image: Placeholder,
+      price: +price,
+      category: category,
+    });
+  };
   const sqlBooks = data.filter((book) => book.category === "sql");
   const noSqlBooks = data.filter((book) => book.category === "nosql");
   const mongodbBooks = data.filter((book) => book.category === "mongodb");
   const javascriptBooks = data.filter((book) => book.category === "javascript");
   const reactBooks = data.filter((book) => book.category === "react");
 
+  const adminUser =
+    window.sessionStorage.key("user") &&
+    JSON.parse(window.sessionStorage.getItem("user"));
   return (
     <>
+      {window.sessionStorage.key("user") && adminUser.isAdmin === true ? (
+        <button onClick={() => setAddProductToggle(!addProductToggle)}>
+          Add Product
+        </button>
+      ) : (
+        <></>
+      )}
+      {addProductToggle && (
+        <div className="form_container">
+          <form onSubmit={handleAddProduct} className="admin_form">
+            <label className="label">Title:</label>
+            <input
+              className="input"
+              type="text"
+              onChange={(e) => setTitle(e.target.value)}
+            />
+            <label className="label">Subtitle:</label>
+            <input
+              className="input"
+              type="text"
+              onChange={(e) => setSubtitle(e.target.value)}
+            />
+            <label className="label">Price:</label>
+            <input
+              className="price_input"
+              type="text"
+              onChange={(e) => setPrice(e.target.value)}
+            />
+            <label className="label" htmlFor="category">
+              Category
+            </label>
+            <select
+              id="category"
+              className="category"
+              onChange={(e) => setCategory(e.target.value)}
+            >
+              <option value={"sql"}>SQL</option>
+              <option value={"nosql"}>NoSQL</option>
+              <option value={"mongodb"}>MongoDB</option>
+              <option value={"javascript"}>JavaScript</option>
+              <option value={"react"}>React</option>
+            </select>
+            <button className="submitEdit" type="submit">
+              Save Changes
+            </button>
+          </form>
+        </div>
+      )}
+
       <h1 className="page__title">Featured Categories</h1>
       <div className="home__container">
         <div className="home__content">
