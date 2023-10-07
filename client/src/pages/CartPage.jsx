@@ -1,56 +1,99 @@
 import { useSelector } from "react-redux";
 import CartItem from "../components/CartItem";
 import {
-  useSubmitOrderMutation,
-  useGetCartItemsQuery,
+	useSubmitOrderMutation,
+	useGetCartItemsQuery,
 } from "../reducers/cart.js";
+import { useState, useEffect } from "react";
+import GuestCartItem from "../components/GuestCartItem";
 
 function CartPage() {
-  const cart = useSelector((state) => state.cart.cart);
+	const cart = useSelector((state) => state.cart.cart);
+	const user = useSelector(
+		(state) => state.auth.credentials.token
+	);
+	const tPrice = cart.reduce(
+		(acc, curr) => acc + curr.price * curr.qty,
+		0
+	);
+	const [submitOrder] = useSubmitOrderMutation();
+	const { refetch } = useGetCartItemsQuery();
 
-  const tPrice = cart.reduce((acc, curr) => acc + curr.price * curr.qty, 0);
-  console.log(tPrice);
+	const [loading, setLoading] = useState(true);
+	const [cartProducts, setCartProducts] = useState([]);
 
-  const [submitOrder] = useSubmitOrderMutation();
-  const { refetch } = useGetCartItemsQuery();
-  const submitOrderHandler = async () => {
-    await submitOrder();
-    refetch();
-  };
-  return (
-    <>
-      <div className="cartPage">
-        <div className="cart_container">
-          <h1 className="shopping_title">Shopping Cart</h1>
-          {cart.map((item) => (
-            <CartItem key={item.id} item={item} />
-          ))}
-        </div>
-        <div className="checkout__container">
-          <h1>Summary</h1>
-          <div className="price_info">
-            <div className="subtotal">
-              <h2>SUBTOTAL</h2>
-              <h2>$ {tPrice / 100}</h2>
-            </div>
-            <div className="shipping">
-              <h2>SHIPPING</h2>
-              <h2>FREE</h2>
-            </div>
-            <div className="tax">
-              <h2>TAXES</h2>
-              <h2>NONE!</h2>
-            </div>
-          </div>
-          <div className="total">
-            <h2>TOTAL</h2>
-            <h2>$ {tPrice / 100}</h2>
-          </div>
-          <button onClick={submitOrderHandler}>Checkout</button>
-        </div>
-      </div>
-    </>
-  );
+	useEffect(() => {
+		const renderGuestCart = async () => {
+			setLoading(true);
+			const cartStorage =
+				window.localStorage.getItem("cart");
+			const cartStorageArr = await JSON.parse(cartStorage);
+			setCartProducts(cartStorageArr);
+			setLoading(false);
+			return cartStorageArr;
+		};
+
+		if (!user) {
+			console.log(`not user: `);
+			renderGuestCart();
+		}
+	}, []);
+
+	// if (loading) {
+	// 	return <h1>LOADING...</h1>;
+	// }
+
+	const submitOrderHandler = async () => {
+		await submitOrder();
+		refetch();
+	};
+	return (
+		<>
+			{" "}
+			<div className="cartPage">
+				<div className="cart_container">
+					<h1 className="shopping_title">Shopping Cart</h1>
+					{!user && cartProducts.length !== 0
+						? cartProducts.map((item) => (
+								<GuestCartItem
+									key={item.id}
+									item={item}
+								/>
+						  ))
+						: cart.map((item) => (
+								<CartItem
+									key={item.id}
+									item={item}
+								/>
+						  ))}
+				</div>
+				<div className="checkout__container">
+					<h1>Summary</h1>
+					<div className="price_info">
+						<div className="subtotal">
+							<h2>SUBTOTAL</h2>
+							<h2>$ {tPrice / 100}</h2>
+						</div>
+						<div className="shipping">
+							<h2>SHIPPING</h2>
+							<h2>FREE</h2>
+						</div>
+						<div className="tax">
+							<h2>TAXES</h2>
+							<h2>NONE!</h2>
+						</div>
+					</div>
+					<div className="total">
+						<h2>TOTAL</h2>
+						<h2>$ {tPrice / 100}</h2>
+					</div>
+					<button onClick={submitOrderHandler}>
+						Checkout
+					</button>
+				</div>
+			</div>
+		</>
+	);
 }
 
 export default CartPage;
