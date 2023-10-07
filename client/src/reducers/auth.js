@@ -66,7 +66,6 @@ const authSlice = createSlice({
 					token: "",
 				};
 				window.sessionStorage.removeItem(CREDENTIALS);
-				window.localStorage.removeItem("cart");
 			}
 		);
 	},
