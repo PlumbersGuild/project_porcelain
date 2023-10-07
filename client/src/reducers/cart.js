@@ -31,10 +31,9 @@ const cartApi = api.injectEndpoints({
       query: () => "/api/cart",
     }),
     submitOrder: builder.mutation({
-      query: (userInput) => ({
+      query: () => ({
         url: "/api/order/submit",
         method: "POST",
-        body: userInput,
       }),
     }),
   }),

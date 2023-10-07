@@ -73,7 +73,7 @@ router.post("/login", async (req, res, next) => {
 
     res.send({
       token,
-      user: { userId: user.id, username: user.username },
+      user: { userId: user.id, username: user.username, isAdmin: user.isAdmin },
       cart: userOrder.CartItem,
     });
   } catch (err) {

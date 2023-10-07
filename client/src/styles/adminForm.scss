@@ -1,0 +1,31 @@
+.form_container {
+    display: flex;
+    justify-content: center;
+    color: white;
+    .admin_form {
+        display: flex;
+        flex-direction: column;
+        padding-top: 15px;
+        .label {
+            padding: 10px 0;
+        }
+        .input {
+            margin: 10px 0;
+            width: 400px;
+            height: 50px;
+            border-radius: 0.25rem;
+        }
+        .price_input {
+            width: 200px;
+            margin: 10px auto;
+        }
+        .submitEdit {
+            width: 100px;
+            margin: 10px auto;
+        }
+        .category {
+            width: 70px;
+            margin: 0 auto;
+        }
+    }
+}
