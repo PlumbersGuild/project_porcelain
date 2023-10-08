@@ -27,13 +27,24 @@ function Nav() {
   //   }
 
   // console.log(`cart2: `, cart);
-
+  const adminUser =
+    window.sessionStorage.key("user") &&
+    JSON.parse(window.sessionStorage.getItem("user"));
   return (
     <nav>
       <div className="logo">
         <img src={logo} />
       </div>
       <div className="navBar">
+        {window.sessionStorage.key("user") &&
+        adminUser &&
+        adminUser.isAdmin === true ? (
+          <Link className="navLink" to={"/admin"}>
+            Admin
+          </Link>
+        ) : (
+          <></>
+        )}
         <Link className="navLink" to={"/"}>
           Home
         </Link>

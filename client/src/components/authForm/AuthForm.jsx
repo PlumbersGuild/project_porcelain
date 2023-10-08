@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useLoginMutation, useRegisterMutation } from "../../reducers/auth";
 import { useGetCartItemsQuery } from "../../reducers/cart";
+import { Link } from "react-router-dom";
 
 /**
  * AuthForm allows a user to either login or register for an account.
@@ -44,7 +45,8 @@ function AuthForm() {
           console.log("user", user);
           window.sessionStorage.setItem("user", JSON.stringify(user));
           window.localStorage.removeItem("cart");
-          refetch();
+          // location.reload();
+          // refetch();
         });
       //   refetch();
     } catch (error) {
@@ -114,6 +116,7 @@ function AuthForm() {
                   setPassword(event.target.value);
                 }}
               />
+
               <button className="auth__submit">{authType}</button>
             </>
           )}

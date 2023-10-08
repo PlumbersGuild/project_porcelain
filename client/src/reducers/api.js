@@ -57,6 +57,12 @@ export const api = createApi({
         method: "DELETE",
       }),
     }),
+    getUsers: builder.query({
+      query: () => "api/users",
+    }),
+    getUsersById: builder.query({
+      query: (id) => `/api/users/${id}`,
+    }),
   }),
 });
 
@@ -104,4 +110,6 @@ export const {
   useEditProductMutation,
   useAddProductMutation,
   useDeleteProductMutation,
+  useGetUsersByIdQuery,
+  useGetUsersQuery,
 } = api;
