@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createSlice } from "@reduxjs/toolkit";
 
 export const api = createApi({
   reducerPath: "api",
@@ -58,6 +59,44 @@ export const api = createApi({
     }),
   }),
 });
+
+const dataSlice = createSlice({
+  name: "data",
+  initialState: {
+    users: [],
+    books: [],
+  },
+  reducers: {},
+  extraReducers: (builder) => {
+    builder.addMatcher(
+      api.endpoints.getBooks.matchFulfilled,
+      (state, { payload }) => {
+        return {
+          ...state,
+          books: payload,
+        };
+      }
+    ),
+      builder.addMatcher(
+        api.endpoints.deleteProduct.matchFulfilled,
+        (state, { payload }) => {
+          return {
+            ...state,
+            books: state.books.filter((book) => book.id !== payload.id),
+          };
+        }
+      ),
+      builder.addMatcher(
+        api.endpoints.addProduct.matchFulfilled,
+        (state, { payload }) => {
+          state.books.push(payload);
+          return state;
+        }
+      );
+  },
+});
+
+export default dataSlice.reducer;
 
 export const {
   useGetBooksQuery,

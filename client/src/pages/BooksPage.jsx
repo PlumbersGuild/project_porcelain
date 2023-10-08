@@ -3,18 +3,22 @@ import { Link } from "react-router-dom";
 import Placeholder from "../assets/placeholder.png";
 import { useAddProductMutation } from "../reducers/api";
 import { useState } from "react";
+import { useSelector } from "react-redux";
 function BooksPage() {
-  const { data, isLoading } = useGetBooksQuery();
+  useGetBooksQuery();
+  const books = useSelector((state) => state.data.books);
   const [addProduct] = useAddProductMutation();
   const [addProductToggle, setAddProductToggle] = useState(false);
   const [title, setTitle] = useState("");
   const [subtitle, setSubtitle] = useState("");
   const [price, setPrice] = useState("");
-  const [category, setCategory] = useState("");
-  if (isLoading) {
+  const [category, setCategory] = useState("sql");
+  if (useGetBooksQuery().isLoading) {
     return <h1>LOADING...</h1>;
   }
-  const handleAddProduct = async () => {
+  const handleAddProduct = async (e) => {
+    e.preventDefault();
+    setAddProductToggle(!setAddProductToggle);
     await addProduct({
       title: title,
       subtitle: subtitle,
@@ -23,11 +27,13 @@ function BooksPage() {
       category: category,
     });
   };
-  const sqlBooks = data.filter((book) => book.category === "sql");
-  const noSqlBooks = data.filter((book) => book.category === "nosql");
-  const mongodbBooks = data.filter((book) => book.category === "mongodb");
-  const javascriptBooks = data.filter((book) => book.category === "javascript");
-  const reactBooks = data.filter((book) => book.category === "react");
+  const sqlBooks = books.filter((book) => book.category === "sql");
+  const noSqlBooks = books.filter((book) => book.category === "nosql");
+  const mongodbBooks = books.filter((book) => book.category === "mongodb");
+  const javascriptBooks = books.filter(
+    (book) => book.category === "javascript"
+  );
+  const reactBooks = books.filter((book) => book.category === "react");
 
   const adminUser =
     window.sessionStorage.key("user") &&
