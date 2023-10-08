@@ -89,7 +89,11 @@ router.post("/new", verify, async (req, res, next) => {
             isFulfilled: false,
           },
           include: {
-            CartItem: true,
+            CartItem: {
+              include: {
+                product: true,
+              },
+            },
           },
         });
         res.status(200).json(order.CartItem);
@@ -100,6 +104,9 @@ router.post("/new", verify, async (req, res, next) => {
             qty,
             price: book.price,
             productId: foundProduct.id,
+          },
+          include: {
+            product: true,
           },
         });
         res.status(201).json(createdCartItem);

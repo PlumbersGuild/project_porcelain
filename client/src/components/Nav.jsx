@@ -12,7 +12,7 @@ function Nav() {
   const dispatch = useDispatch();
   const { currentData, isLoading } = useGetCartItemsQuery();
 
-  useEffect(() => {}, []);
+  // useEffect(() => {}, []);
 
   // console.log(`user: `, user);
 
