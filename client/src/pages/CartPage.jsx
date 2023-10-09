@@ -8,7 +8,21 @@ import { Link } from "react-router-dom";
 function CartPage() {
   const cart = useSelector((state) => state.cart.cart);
   const user = useSelector((state) => state.auth.credentials.token);
-  const tPrice = cart.reduce((acc, curr) => acc + curr.price * curr.qty, 0);
+
+  const calculateTPrice = () => {
+    if (!user) {
+      if (window.localStorage.key("cart")) {
+        const guestCart = JSON.parse(window.localStorage.getItem("cart"));
+        return guestCart?.reduce(
+          (acc, curr) => acc + curr.book.price * curr.qty,
+          0
+        );
+      }
+    } else {
+      return cart.reduce((acc, curr) => acc + curr.price * curr.qty, 0);
+    }
+  };
+
   const [submitOrder] = useSubmitOrderMutation();
 
   const [loading, setLoading] = useState(true);
@@ -25,17 +39,17 @@ function CartPage() {
     };
 
     if (!user) {
-      console.log(`not user: `);
       renderGuestCart();
     }
-  }, []);
-
-  // if (loading) {
-  // 	return <h1>LOADING...</h1>;
-  // }
+  }, [user]);
 
   const submitOrderHandler = async () => {
-    await submitOrder();
+    if (!user && cartProducts.length !== 0) {
+      window.localStorage.removeItem("cart");
+      setCartProducts([]);
+    } else {
+      await submitOrder();
+    }
   };
   return (
     <>
@@ -43,7 +57,7 @@ function CartPage() {
       <div className="cartPage">
         <div className="cart_container">
           <h1 className="shopping_title">Shopping Cart</h1>
-          {!user && cartProducts.length !== 0
+          {!user && window.localStorage.key("cart")
             ? cartProducts.map((item) => (
                 <GuestCartItem key={item.id} item={item} />
               ))
@@ -54,7 +68,7 @@ function CartPage() {
           <div className="price_info">
             <div className="subtotal">
               <h2>SUBTOTAL</h2>
-              <h2>$ {tPrice / 100}</h2>
+              <h2>$ {calculateTPrice() / 100}</h2>
             </div>
             <div className="shipping">
               <h2>SHIPPING</h2>
@@ -67,7 +81,7 @@ function CartPage() {
           </div>
           <div className="total">
             <h2>TOTAL</h2>
-            <h2>$ {tPrice / 100}</h2>
+            <h2>$ {calculateTPrice() / 100}</h2>
           </div>
           <Link
             className="checkout_button"
