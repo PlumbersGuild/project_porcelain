@@ -1,7 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import BooksPage from "./pages/BooksPage";
 import "./styles/input.scss";
-import SingleBookPage from "./pages/singleBookPage";
+import SingleBookPage from "./pages/SingleBookPage";
 import AuthPage from "./pages/AuthPage";
 import AboutPage from "./pages/AboutPage";
 import CartPage from "./pages/CartPage";
@@ -10,13 +10,6 @@ import AdminPage from "./pages/AdminPage";
 import CheckoutPage from "./pages/CheckoutPage";
 
 function App() {
-  const protectedRoutes = () => {
-    return (
-      <>
-        <Routes></Routes>
-      </>
-    );
-  };
   const adminUser =
     window.sessionStorage.key("user") &&
     JSON.parse(window.sessionStorage.getItem("user"));
