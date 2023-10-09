@@ -38,7 +38,7 @@ function AdminForm({ book }) {
         >
           Edit Product
         </button>
-        <Link to={"/"}>
+        <Link to={"/books"}>
           <button
             className="delete_button"
             onClick={() => handleDeleteProduct(book.id)}

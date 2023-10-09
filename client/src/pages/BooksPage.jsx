@@ -41,7 +41,10 @@ function BooksPage() {
   return (
     <>
       {window.sessionStorage.key("user") && adminUser.isAdmin === true ? (
-        <button onClick={() => setAddProductToggle(!addProductToggle)}>
+        <button
+          onClick={() => setAddProductToggle(!addProductToggle)}
+          className="add_product_button"
+        >
           Add Product
         </button>
       ) : (

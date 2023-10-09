@@ -45,7 +45,7 @@ function AuthForm() {
           console.log("user", user);
           window.sessionStorage.setItem("user", JSON.stringify(user));
           window.localStorage.removeItem("cart");
-          // location.reload();
+          location.reload();
           // refetch();
         });
       //   refetch();

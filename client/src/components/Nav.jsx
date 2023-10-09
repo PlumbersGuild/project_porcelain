@@ -21,12 +21,15 @@ function Nav() {
   // }
 
   const cart = useSelector((state) => state.cart?.cart) || [];
+  const cartQty = cart.reduce((acc, curr) => acc + curr.qty, 0);
 
   //   if (cart.length === 0) {
   //     return <div>Empty Cart</div>;
   //   }
 
   // console.log(`cart2: `, cart);
+  const guestCrt = JSON.parse(window.localStorage.getItem("cart"));
+  console.log("guestcart", guestCrt);
   const adminUser =
     window.sessionStorage.key("user") &&
     JSON.parse(window.sessionStorage.getItem("user"));
@@ -45,6 +48,7 @@ function Nav() {
         ) : (
           <></>
         )}
+        <span>{"|"}</span>
         <Link className="navLink" to={"/"}>
           Home
         </Link>
@@ -67,6 +71,7 @@ function Nav() {
             Logout
           </Link>
         )}
+
         <Link className="cartLink" to={"/cart"}>
           <button className="cartBtn">
             <svg
@@ -82,7 +87,14 @@ function Nav() {
                 d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"
               />
             </svg>
-            <div className="cartContent">Cart ({cart.length})</div>
+            <div className="cartContent">
+              Cart (
+              {user
+                ? cartQty
+                : window.localStorage.key("cart") &&
+                  JSON.parse(window.localStorage.getItem("cart")).length}
+              )
+            </div>
           </button>
         </Link>
       </div>

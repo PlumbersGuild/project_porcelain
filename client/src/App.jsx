@@ -7,6 +7,7 @@ import AboutPage from "./pages/AboutPage";
 import CartPage from "./pages/CartPage";
 import Home from "./pages/Home";
 import AdminPage from "./pages/AdminPage";
+import CheckoutPage from "./pages/CheckoutPage";
 
 function App() {
   const protectedRoutes = () => {
@@ -28,6 +29,7 @@ function App() {
         <Route path={"/login/*"} element={<AuthPage />} />
         <Route path={"/about"} element={<AboutPage />} />
         <Route path={"/cart"} element={<CartPage />} />
+        <Route path={"/checkout"} element={<CheckoutPage />} />
         {/* <Route path={"/admin"} element={<AdminPage />} /> */}
         {window.sessionStorage.key("user") && adminUser.isAdmin === true ? (
           <Route path="/admin" element={<AdminPage />} />

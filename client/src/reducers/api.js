@@ -69,7 +69,6 @@ export const api = createApi({
 const dataSlice = createSlice({
   name: "data",
   initialState: {
-    users: [],
     books: [],
   },
   reducers: {},
