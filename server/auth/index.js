@@ -31,7 +31,10 @@ router.post("/register", async (req, res, next) => {
       process.env.JWT
     );
 
-    res.status(201).send({ token });
+    res.status(201).send({
+      token,
+      user: { userId: user.id, username: user.username, isAdmin: user.isAdmin },
+    });
   } catch (err) {
     next(err);
   }

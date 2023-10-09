@@ -48,9 +48,11 @@ const cartSlice = createSlice({
     builder.addMatcher(
       cartApi.endpoints.addNewCartItem.matchFulfilled,
       (state, { payload }) => {
-        return {
-          cart: payload,
-        };
+        if (state.cart.length === 0) {
+          return { cart: [payload] };
+        } else {
+          return { cart: payload };
+        }
       }
     ),
       builder.addMatcher(
@@ -83,6 +85,14 @@ const cartSlice = createSlice({
         authApi.endpoints.login.matchFulfilled,
         (state, { payload }) => {
           return { cart: payload.cart };
+        }
+      ),
+      builder.addMatcher(
+        cartApi.endpoints.submitOrder.matchFulfilled,
+        (state, { payload }) => {
+          return {
+            cart: [],
+          };
         }
       );
   },

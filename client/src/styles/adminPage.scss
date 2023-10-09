@@ -1,0 +1,21 @@
+.admin_container {
+    table {
+        padding-top: 100px;
+        margin: 0 auto;
+        color: white;
+        tr {
+            th {
+                font-size: xx-large;
+                padding: 10px 80px;
+                text-align: center;
+                text-decoration: underline;
+
+            }
+            td {
+                text-align: center;
+                padding: 10px 0;
+                font-size: x-large;
+            }
+        }
+    }
+}

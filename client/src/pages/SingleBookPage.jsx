@@ -3,10 +3,7 @@ import { useParams } from "react-router-dom";
 import Placeholder from "../assets/placeholder.png";
 
 import { useSelector } from "react-redux";
-import {
-  useAddNewCartItemMutation,
-  useGetCartItemsQuery,
-} from "../reducers/cart";
+import { useAddNewCartItemMutation } from "../reducers/cart";
 import AdminForm from "../components/AdminForm";
 
 const SingleBookPage = () => {
@@ -19,7 +16,6 @@ const SingleBookPage = () => {
   const cart = useSelector((state) => state.cart.cart);
   console.log(`cart: `, cart);
 
-  const { refetch } = useGetCartItemsQuery();
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -63,7 +59,6 @@ const SingleBookPage = () => {
       }
     } else {
       await addNewCartItem(addBook);
-      refetch();
     }
   };
   const adminUser =

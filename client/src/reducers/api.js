@@ -57,13 +57,18 @@ export const api = createApi({
         method: "DELETE",
       }),
     }),
+    getUsers: builder.query({
+      query: () => "api/users",
+    }),
+    getUsersById: builder.query({
+      query: (id) => `/api/users/${id}`,
+    }),
   }),
 });
 
 const dataSlice = createSlice({
   name: "data",
   initialState: {
-    users: [],
     books: [],
   },
   reducers: {},
@@ -104,4 +109,6 @@ export const {
   useEditProductMutation,
   useAddProductMutation,
   useDeleteProductMutation,
+  useGetUsersByIdQuery,
+  useGetUsersQuery,
 } = api;
