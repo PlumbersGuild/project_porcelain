@@ -5,12 +5,13 @@ import Placeholder from "../assets/placeholder.png";
 import { useSelector } from "react-redux";
 import { useAddNewCartItemMutation } from "../reducers/cart";
 import AdminForm from "../components/AdminForm";
+import { useNavigate } from "react-router-dom";
 
 const SingleBookPage = () => {
   const { id } = useParams();
   const { data: book, isLoading, isError } = useGetBookByIdQuery(id);
   const [addNewCartItem] = useAddNewCartItemMutation();
-
+  const navigate = useNavigate();
   const user = useSelector((state) => state.auth.credentials?.token);
 
   const cart = useSelector((state) => state.cart.cart);
@@ -56,6 +57,7 @@ const SingleBookPage = () => {
         });
         // reset the cart to include the new guestCart
         window.localStorage.setItem("cart", JSON.stringify(newGuestCart));
+        navigate("/cart", { replace: true });
       }
     } else {
       await addNewCartItem(addBook);
