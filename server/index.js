@@ -16,7 +16,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/auth", require("./auth"));
-``
+
 app.use("/api", require("./api"));
 
 app.listen(PORT, () => {
