@@ -7,7 +7,7 @@ import { createSlice } from "@reduxjs/toolkit";
 export const api = createApi({
 	reducerPath: "api",
 	baseQuery: fetchBaseQuery({
-		baseUrl: "https://server-k66y.onrender.com/:8080/",
+		baseUrl: "https://server-k66y.onrender.com:8080/",
 		prepareHeaders: (headers) => {
 			const credentials = JSON.parse(
 				window.sessionStorage.getItem("credentials")
